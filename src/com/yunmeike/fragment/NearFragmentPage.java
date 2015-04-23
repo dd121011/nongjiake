@@ -53,7 +53,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	private PtrClassicFrameLayout mPtrFrame;
 	private NearListAdapter mAdapter;
 	
-	private ViewGroup switch_near_btn,switch_hot_btn;
+	private ViewGroup switch_near_btn,switch_hot_btn,switch_sort_btn;
 
 	private Activity activity;
 	private RequestQueue mQueue;
@@ -105,8 +105,10 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	        
 			switch_near_btn = (ViewGroup) rootView.findViewById(R.id.switch_near_btn);
 			switch_hot_btn = (ViewGroup) rootView.findViewById(R.id.switch_hot_btn);
+			switch_sort_btn = (ViewGroup)rootView.findViewById(R.id.switch_sort_btn);
 			switch_near_btn.setOnClickListener(new SwitchOnClickListener());
 			switch_hot_btn.setOnClickListener(new SwitchOnClickListener());
+			switch_sort_btn.setOnClickListener(new SwitchOnClickListener());
 			
 			cityManger = CurrCityManager.getInstance();
 			cityManger.registerChangerCurrCityListener(currCityListener);
@@ -162,15 +164,30 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	}	
 	
 	
-	private void handleSwitch() {
+	private void handleSwitch(int id) {
 		final RadioButton nearRadio =(RadioButton) switch_near_btn.getChildAt(0);
 		final RadioButton hotRadio =(RadioButton) switch_hot_btn.getChildAt(0);
-		if(nearRadio.isChecked()){
-			nearRadio.setChecked(false);
-			hotRadio.setChecked(true);
-		}else{
+		final RadioButton sortRadio =(RadioButton) switch_sort_btn.getChildAt(0);
+
+		
+		switch (id) {
+		case R.id.switch_near_btn:
 			nearRadio.setChecked(true);
 			hotRadio.setChecked(false);
+			sortRadio.setChecked(false);
+			break;
+		case R.id.switch_hot_btn:
+			nearRadio.setChecked(false);
+			hotRadio.setChecked(true);
+			sortRadio.setChecked(false);
+			break;
+		case R.id.switch_sort_btn:
+			nearRadio.setChecked(false);
+			hotRadio.setChecked(false);
+			sortRadio.setChecked(true);
+			break;
+		default:
+			break;
 		}
 	}
 	
@@ -233,10 +250,13 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		public void onClick(View view) {
 			switch (view.getId()) {
 			case R.id.switch_near_btn:
-				handleSwitch();
+				handleSwitch(R.id.switch_near_btn);
 				break;
 			case R.id.switch_hot_btn:
-				handleSwitch();
+				handleSwitch(R.id.switch_hot_btn);
+				break;
+			case R.id.switch_sort_btn:
+				handleSwitch(R.id.switch_sort_btn);
 				break;
 			default:
 				break;

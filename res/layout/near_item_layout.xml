@@ -50,7 +50,8 @@
                 android:layout_weight="1"
                 android:text="店长"
                 android:textColor="@color/text_color1"
-                android:textSize="@dimen/text_size1" />
+                android:textSize="@dimen/text_size1" 
+                android:background="@drawable/near_item_text_bg"/>
 
             <ImageView
                 android:layout_width="wrap_content"

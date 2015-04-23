@@ -95,7 +95,7 @@
                 android:clickable="false"
                 android:checked="true"
                 android:paddingLeft="@dimen/content_margin_inside"
-                android:text="附近" />
+                android:text="景区" />
         </LinearLayout>
 
         <View 
@@ -124,7 +124,36 @@
                 android:checked="false"
                 android:gravity="center"
                 android:paddingLeft="@dimen/content_margin_inside"
-                android:text="人气最高" />
+                android:text="全部" />
+        </LinearLayout>
+        
+        <View 
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="@color/text_color6"
+            android:layout_weight="0"
+            android:layout_marginTop="@dimen/content_margin_inside"
+            android:layout_marginBottom="@dimen/content_margin_inside"/>
+
+        <LinearLayout
+            android:id="@+id/switch_sort_btn"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/content_margin_outside"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/near_switch_btn"
+                android:textColor="@drawable/switch_text_color"
+                android:textSize="@dimen/text_size1"
+                android:clickable="false"
+                android:checked="false"
+                android:gravity="center"
+                android:paddingLeft="@dimen/content_margin_inside"
+                android:text="智能排序" />
         </LinearLayout>
     </LinearLayout>
 

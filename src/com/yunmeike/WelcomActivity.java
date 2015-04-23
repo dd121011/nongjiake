@@ -103,6 +103,7 @@ public class WelcomActivity extends BaseActivity {
 		}else{
 			Intent intent = new Intent(context,LoginActivity.class);
 			context.startActivity(intent);
+			Config.setHideGuided(context, true);
 			this.finish();
 		}
 	}
