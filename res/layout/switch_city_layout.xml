@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <include
+        android:id="@+id/top_title_layout"
+        layout="@layout/top_title_layout" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/top_title_layout" >
+
+        <RelativeLayout
+            android:id="@+id/city_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >>
+    		
+            <ListView
+                android:id="@+id/city_list"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#E8E8E8"
+                android:cacheColorHint="#00000000"
+                android:scrollbars="none" />
+
+    		<include android:id="@+id/hint_city_layout" layout="@layout/switch_city_item" android:visibility="gone"/>
+    		
+            <com.yunmeike.view.MyLetterListView
+                android:id="@+id/cityLetterListView"
+                android:layout_width="30dip"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="#40000000" />
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/overlay"
+            android:layout_gravity="center"
+            android:background="@drawable/letter_bg_corners5"
+            android:gravity="center"
+            android:maxWidth="60.0dip"
+            android:minWidth="60.0dip"
+            android:padding="5.0dip"
+            android:textColor="#ffffffff"
+            android:textSize="35.0sp"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+</RelativeLayout>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#69b11b"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/switch_adress_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:padding="@dimen/content_margin_outside" >
+
+            <TextView
+                android:id="@+id/curr_city_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="城市"
+                android:textColor="@color/text_color0"
+                android:textSize="@dimen/text_size1" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/near_top_triangle"
+                android:layout_marginLeft="@dimen/content_margin_inside" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/search_background"
+            android:gravity="center" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/content_margin_inside"
+                android:src="@drawable/search_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="寻找店铺、美发师"
+                android:textColor="@color/text_color0"
+                android:textSize="@dimen/text_size1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/map_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/content_margin_outside" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/near_map_btn" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/switch_background"
+        android:gravity="center"
+        android:orientation="horizontal" >
+		
+        <LinearLayout
+            android:id="@+id/switch_near_btn"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/content_margin_outside"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/near_switch_btn"
+                android:textColor="@drawable/switch_text_color"
+                android:textSize="@dimen/text_size1"
+                android:gravity="center"
+                android:clickable="false"
+                android:checked="true"
+                android:paddingLeft="@dimen/content_margin_inside"
+                android:text="附近" />
+        </LinearLayout>
+
+        <View 
+            android:layout_width="1dip"
+            android:layout_height="match_parent"
+            android:background="@color/text_color6"
+            android:layout_weight="0"
+            android:layout_marginTop="@dimen/content_margin_inside"
+            android:layout_marginBottom="@dimen/content_margin_inside"/>
+
+        <LinearLayout
+            android:id="@+id/switch_hot_btn"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/content_margin_outside"
+            android:layout_weight="1"
+            android:gravity="center" >
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/near_switch_btn"
+                android:textColor="@drawable/switch_text_color"
+                android:textSize="@dimen/text_size1"
+                android:clickable="false"
+                android:checked="false"
+                android:gravity="center"
+                android:paddingLeft="@dimen/content_margin_inside"
+                android:text="人气最高" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
