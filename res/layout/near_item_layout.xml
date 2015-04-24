@@ -19,8 +19,8 @@
             android:id="@+id/face_img_tmp"
             android:layout_width="60dip"
             android:layout_height="60dip"
+            android:layout_marginLeft="@dimen/content_margin_vertical"
             android:layout_marginTop="@dimen/content_margin_inside"
-	        android:layout_marginLeft="@dimen/content_margin_vertical"
             android:scaleType="centerCrop"
             android:src="@drawable/face_test1"
             android:visibility="invisible"
@@ -31,7 +31,7 @@
             app:sriv_oval="true"
             app:sriv_right_bottom_corner_radius="16dip"
             app:sriv_right_top_corner_radius="0dip" />
-        
+
         <LinearLayout
             android:id="@+id/title_layout"
             android:layout_width="match_parent"
@@ -48,10 +48,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@drawable/near_item_text_bg"
                 android:text="店长"
                 android:textColor="@color/text_color1"
-                android:textSize="@dimen/text_size1" 
-                android:background="@drawable/near_item_text_bg"/>
+                android:textSize="@dimen/text_size1"
+                android:visibility="gone" />
+
+            <com.yunmeike.view.CustomListView
+                android:id="@+id/list_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+            </com.yunmeike.view.CustomListView>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -82,8 +91,8 @@
             android:id="@+id/face_img"
             android:layout_width="60dip"
             android:layout_height="60dip"
+            android:layout_marginLeft="@dimen/content_margin_vertical"
             android:layout_marginTop="@dimen/content_margin_inside"
-	        android:layout_marginLeft="@dimen/content_margin_vertical"
             android:scaleType="centerCrop"
             android:src="@drawable/face_test1"
             app:sriv_border_color="@color/text_color0"
@@ -110,7 +119,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="审美造型上地店"
+                android:text="王小二农家院"
                 android:textColor="@color/text_color0"
                 android:textSize="@dimen/text_size0" />
 
@@ -125,7 +134,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="4.5折"
+                android:text="￥234"
                 android:textColor="@color/text_color0"
                 android:textSize="@dimen/text_size5" />
 

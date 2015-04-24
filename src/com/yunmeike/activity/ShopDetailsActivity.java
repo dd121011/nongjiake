@@ -14,27 +14,27 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.GridView;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.TextView;
 
-import com.yunmeike.BaseActivity;
 import com.njk.R;
-import com.yunmeike.adapter.BarberFaceAdapter;
+import com.yunmeike.BaseActivity;
 import com.yunmeike.fragment.ShopDetailsComboFragment;
 import com.yunmeike.fragment.ShopDetailsInfoFragment;
 import com.yunmeike.fragment.ShopDetailsRemarkFragment;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
+import com.yunmeike.view.CustomListView;
+import com.yunmeike.view.ViewHolder;
 
-public class ShopDetailsActivity extends BaseActivity implements OnClickListener,OnItemClickListener {
+public class ShopDetailsActivity extends BaseActivity implements OnClickListener {
 	
 	private ImageView topImg;
 	private RadioGroup swithRadio;
-	private GridView barberFaceLayout;
 	
 	private Activity context;
 	private FragmentManager fm;
@@ -59,10 +59,6 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
-		barberFaceLayout = (GridView) rootView.findViewById(R.id.shop_barber_face_layout);
-		barberFaceLayout.setOnItemClickListener(this);
-		BarberFaceAdapter adapter = new BarberFaceAdapter(context, mListItems);
-		barberFaceLayout.setAdapter(adapter);
 		
 		int[] wh = Utils.getDisplayMetrics(context);
 		topImg = (ImageView) findViewById(R.id.shop_top_img);
@@ -71,6 +67,9 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		
 		
 		findViewById(R.id.shop_adress_layout).setOnClickListener(this);;
+		
+		CustomListView list = (CustomListView) findViewById(R.id.list_layout);
+		list.setAdapter(new TextAdapter(context, textArra));
 	}
 	
 	private void changeFragment(String mTag,Class mClass){  
@@ -138,11 +137,65 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long id) {
-		Intent intent = new Intent(context,BarberDetailsActivity.class);
-		context.startActivity(intent);
+	String[] textArra = {"采摘","垂钓","祈福","农家"};
+	class TextAdapter extends BaseAdapter{
+		String[] texts = null;
+		Activity context = null;
+		public TextAdapter(Activity context, String[] textArra) {
+			texts = textArra;
+			this.context = context;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return texts.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+
+			return texts[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if(convertView == null){
+				convertView = LayoutInflater.from(context).inflate(R.layout.near_item_text_layout, null);
+			}
+			TextView t = ViewHolder.get(convertView, R.id.item_text);
+			t.setText(texts[position]);
+			
+			switch (position) {
+			case 0:
+				t.setTextColor(context.getResources().getColor(R.color.angling_text_color));
+				t.setBackgroundResource(R.color.angling_text_bg_color);
+				break;
+			case 1:
+				t.setTextColor(context.getResources().getColor(R.color.pick_text_color));
+				t.setBackgroundResource(R.color.pick_text_bg_color);		
+				break;
+			case 2:
+				t.setTextColor(context.getResources().getColor(R.color.angling2_text_color));
+				t.setBackgroundResource(R.color.angling2_text_bg_color);
+				break;
+			case 3:
+				t.setTextColor(context.getResources().getColor(R.color.angling_text_color));
+				t.setBackgroundResource(R.color.angling_text_bg_color);
+				break;
+
+			default:
+				break;
+			}
+			
+			return convertView;
+		}
 		
 	}
 }

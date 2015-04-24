@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.njk.R;
 import com.yunmeike.utils.Utils;
+import com.yunmeike.view.CustomListView;
 import com.yunmeike.view.ViewHolder;
 
 public class NearListAdapter extends BaseAdapter {
@@ -80,7 +82,50 @@ public class NearListAdapter extends BaseAdapter {
 		ImageLoader.getInstance().displayImage("drawable://" + R.drawable.face_test1, faceImg, options);	
 		ImageLoader.getInstance().displayImage("http://img0.bdstatic.com/img/image/4a75a05f8041bf84df4a4933667824811426747915.jpg", faceImg, options);
 		
+		CustomListView list = ViewHolder.get(arg1, R.id.list_layout);
+		list.setAdapter(new TextAdapter(context, textArra));
+		
 		return arg1;
 	}
+	
+	String[] textArra = {"采摘","垂钓","祈福","农家"};
+	class TextAdapter extends BaseAdapter{
+		String[] texts = null;
+		Activity context = null;
+		public TextAdapter(Activity context, String[] textArra) {
+			texts = textArra;
+			this.context = context;
+		}
 
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return texts.length;
+		}
+
+		@Override
+		public Object getItem(int position) {
+
+			return texts[position];
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			if(convertView == null){
+				convertView = LayoutInflater.from(context).inflate(R.layout.near_item_text_layout, null);
+			}
+			TextView t = ViewHolder.get(convertView, R.id.item_text);
+			t.setText(texts[position]);
+			
+			
+			return convertView;
+		}
+		
+	}
 }

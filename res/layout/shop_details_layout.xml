@@ -41,7 +41,7 @@
                             android:src="@drawable/test1" />
 
                         <LinearLayout
-                            android:id="@+id/shop_name_layout"
+                            android:id="@+id/shop_user_info_layout"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/shop_top_img"
@@ -49,24 +49,90 @@
                             android:gravity="center_vertical"
                             android:padding="@dimen/content_margin_outside" >
 
-                            <ImageView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="0dip"
                                 android:layout_height="wrap_content"
-                                android:layout_marginRight="@dimen/content_margin_inside"
-                                android:src="@drawable/shop_details_shop_icon" />
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical" >
 
-                            <TextView
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="人均（￥）"
+                                    android:textSize="@dimen/text_size4" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="263"
+                                    android:textSize="@dimen/text_size4" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dip"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="@dimen/content_margin_inside"
+                                android:layout_marginRight="@dimen/content_margin_outside"
+                                android:layout_marginTop="@dimen/content_margin_inside"
+                                android:background="@color/text_color6" />
+
+                            <LinearLayout
+                                android:layout_width="0dip"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:orientation="vertical" >
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="点评"
+                                    android:textSize="@dimen/text_size4" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="12364"
+                                    android:textSize="@dimen/text_size4" />
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dip"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="@dimen/content_margin_inside"
+                                android:layout_marginRight="@dimen/content_margin_outside"
+                                android:layout_marginTop="@dimen/content_margin_inside"
+                                android:background="@color/text_color6" />
+
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="西二旗审美 造型上地店"
-                                android:textSize="@dimen/text_size4" />
+                                android:layout_marginTop="@dimen/content_margin_inside"
+                                android:gravity="center" >
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginRight="@dimen/content_margin_inside"
+                                    android:scaleType="fitXY"
+                                    android:src="@drawable/map_infowindow_like_icon" >
+                                </ImageView>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="550345"
+                                    android:textColor="@color/text_color5"
+                                    android:textSize="@dimen/text_size5" />
+                            </LinearLayout>
                         </LinearLayout>
 
                         <com.yunmeike.view.SelectableRoundedImageView
                             android:id="@+id/face_img"
                             android:layout_width="45dip"
                             android:layout_height="45dip"
-                            android:layout_above="@id/shop_name_layout"
+                            android:layout_above="@id/shop_user_info_layout"
                             android:layout_alignParentRight="true"
                             android:layout_marginBottom="-12dip"
                             android:layout_marginRight="@dimen/content_margin_vertical"
@@ -79,6 +145,34 @@
                             app:sriv_right_bottom_corner_radius="16dip"
                             app:sriv_right_top_corner_radius="0dip" />
                     </RelativeLayout>
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dip"
+                        android:layout_marginLeft="@dimen/content_margin_outside"
+                        android:background="@color/text_color6" />
+
+                    <LinearLayout
+                        android:id="@+id/shop_name_layout"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/shop_user_info_layout"
+                        android:background="@color/text_color0"
+                        android:gravity="center_vertical"
+                        android:padding="@dimen/content_margin_outside" >
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/content_margin_inside"
+                            android:src="@drawable/shop_details_shop_icon" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="西二旗审美 造型上地店"
+                            android:textSize="@dimen/text_size4" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="wrap_content"
@@ -125,10 +219,15 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="1dip"
+                    android:layout_marginLeft="@dimen/content_margin_outside"
+                    android:background="@color/text_color6" />
+
                 <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/content_margin_outside"
                     android:background="@color/text_color0"
                     android:gravity="center_vertical"
                     android:padding="@dimen/content_margin_outside" >
@@ -139,30 +238,14 @@
                         android:layout_marginRight="@dimen/content_margin_inside"
                         android:src="@drawable/shop_detail_vip_icon" />
 
-                    <TextView
-                        android:layout_width="0dip"
+                    <com.yunmeike.view.CustomListView
+                        android:id="@+id/list_layout"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="领取折扣卡"
-                        android:textSize="@dimen/text_size4" />
+                        android:orientation="horizontal" >
+                    </com.yunmeike.view.CustomListView>
                 </LinearLayout>
-
-                <com.yunmeike.view.MyGridView
-                    android:id="@+id/shop_barber_face_layout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="@dimen/content_margin_outside"
-                    android:background="@color/text_color0"
-                    android:columnWidth="90dp"
-                    android:fadingEdge="none"
-                    android:focusable="false"
-                    android:gravity="center"
-                    android:listSelector="@android:color/transparent"
-                    android:numColumns="5"
-                    android:padding="@dimen/content_margin_outside"
-                    android:scrollbars="none"
-                    android:stretchMode="columnWidth" >
-                </com.yunmeike.view.MyGridView>
 
                 <RadioGroup
                     android:id="@+id/swith_shop_details"

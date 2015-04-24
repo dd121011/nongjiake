@@ -20,7 +20,7 @@ import com.njk.R;
 public class DBManager
 {
 	private final int BUFFER_SIZE = 400000;
-	private static final String PACKAGE_NAME = "com.yunmeike";
+	private static final String PACKAGE_NAME = "com.njk";
 	public static final String DB_NAME = "china_city.db";
 	public static final String DB_PATH = "/data" + Environment.getDataDirectory().getAbsolutePath() + "/" + PACKAGE_NAME ; // 存放路径
 	private Context mContext;
