@@ -10,10 +10,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import com.njk.R;
 import com.yunmeike.activity.LoginActivity;
 import com.yunmeike.activity.MainTabActivity;
 import com.yunmeike.adapter.GuideFragmentAdapter;
+import com.yunmeike.category.CategoryTestActivity;
 import com.yunmeike.utils.Config;
 import com.yunmeike.viewpager.CirclePageIndicator;
 import com.yunmeike.viewpager.PageIndicator;
@@ -101,7 +103,8 @@ public class WelcomActivity extends BaseActivity {
 		if(isLogin){
 			startMainTabActivity();
 		}else{
-			Intent intent = new Intent(context,LoginActivity.class);
+//			Intent intent = new Intent(context,LoginActivity.class);
+			Intent intent = new Intent(context,CategoryTestActivity.class);
 			context.startActivity(intent);
 			Config.setHideGuided(context, true);
 			this.finish();
@@ -109,7 +112,8 @@ public class WelcomActivity extends BaseActivity {
 	}
 	
 	private void startMainTabActivity() {
-		Intent intent = new Intent(context,MainTabActivity.class);
+		Intent intent = new Intent(context,CategoryTestActivity.class);
+//		Intent intent = new Intent(context,MainTabActivity.class);
 		context.startActivity(intent);
 		Config.setHideGuided(context, true);
 		this.finish();
