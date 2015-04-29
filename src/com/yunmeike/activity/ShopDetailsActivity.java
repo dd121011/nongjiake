@@ -54,7 +54,7 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		fm = getSupportFragmentManager();  		
 		swithRadio = (RadioGroup) rootView.findViewById(R.id.swith_shop_details);		
 		swithRadio.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
-		swithRadio.check(R.id.radio_btn2);
+		swithRadio.check(R.id.radio_btn1);
 		
 		
 		mListItems = new LinkedList<String>();
@@ -103,10 +103,10 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 //			Toast.makeText(context, "checkedId = "+checkedId, 1000).show();
 			switch (checkedId) {
 			case R.id.radio_btn1:
-				changeFragment(checkedId+"",ShopDetailsRemarkFragment.class);
+				changeFragment(checkedId+"",ShopDetailsInfoFragment.class);
 				break;
 			case R.id.radio_btn2:
-				changeFragment(checkedId+"",ShopDetailsInfoFragment.class);
+				changeFragment(checkedId+"",ShopDetailsRemarkFragment.class);
 				break;
 			case R.id.radio_btn3:
 				changeFragment(checkedId+"",ShopDetailsComboFragment.class);

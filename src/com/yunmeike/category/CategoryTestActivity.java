@@ -9,8 +9,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.njk.R;
 import com.yunmeike.BaseActivity;
-import com.yunmeike.R;
 
 public class CategoryTestActivity extends BaseActivity {
 	private ListView list,sublist;
@@ -22,6 +22,7 @@ public class CategoryTestActivity extends BaseActivity {
 	protected void onCreate(Bundle arg0) {
 		// TODO Auto-generated method stub
 		super.onCreate(arg0);
+		context = this;
 		setContentView(R.layout.category_test_layout);
 		
 		listData = CategoryBeanUtils.getTestDada();

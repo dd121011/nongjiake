@@ -103,8 +103,8 @@ public class WelcomActivity extends BaseActivity {
 		if(isLogin){
 			startMainTabActivity();
 		}else{
-//			Intent intent = new Intent(context,LoginActivity.class);
-			Intent intent = new Intent(context,CategoryTestActivity.class);
+			Intent intent = new Intent(context,LoginActivity.class);
+//			Intent intent = new Intent(context,CategoryTestActivity.class);
 			context.startActivity(intent);
 			Config.setHideGuided(context, true);
 			this.finish();
@@ -112,8 +112,8 @@ public class WelcomActivity extends BaseActivity {
 	}
 	
 	private void startMainTabActivity() {
-		Intent intent = new Intent(context,CategoryTestActivity.class);
-//		Intent intent = new Intent(context,MainTabActivity.class);
+//		Intent intent = new Intent(context,CategoryTestActivity.class);
+		Intent intent = new Intent(context,MainTabActivity.class);
 		context.startActivity(intent);
 		Config.setHideGuided(context, true);
 		this.finish();
