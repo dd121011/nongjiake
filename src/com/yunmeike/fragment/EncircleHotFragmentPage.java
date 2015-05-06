@@ -30,8 +30,9 @@ import com.yunmeike.Global;
 import com.njk.R;
 import com.yunmeike.activity.ShopDetailsActivity;
 import com.yunmeike.adapter.EncircleListAdapter;
-import com.yunmeike.utils.RequestUtils;
-import com.yunmeike.utils.RequestUtils.ResponseHandlerInterface;
+import com.yunmeike.net.utils.RequestCommandEnum;
+import com.yunmeike.net.utils.RequestUtils;
+import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 
 public class EncircleHotFragmentPage extends Fragment {
 
@@ -123,7 +124,7 @@ public class EncircleHotFragmentPage extends Fragment {
 	public void startGetData() {
 
 		RequestUtils.startStringRequest(Method.GET, mQueue,
-				"http://www.baidu.com", new ResponseHandlerInterface() {
+				RequestCommandEnum.FAMILY_LIST, new ResponseHandlerInterface() {
 
 					@Override
 					public void handlerSuccess(String response) {

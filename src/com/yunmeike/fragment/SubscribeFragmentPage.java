@@ -25,8 +25,9 @@ import com.android.volley.toolbox.Volley;
 import com.njk.R;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.adapter.SubscribeListAdapter;
-import com.yunmeike.utils.RequestUtils;
-import com.yunmeike.utils.RequestUtils.ResponseHandlerInterface;
+import com.yunmeike.net.utils.RequestCommandEnum;
+import com.yunmeike.net.utils.RequestUtils;
+import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
 
@@ -117,7 +118,7 @@ public class SubscribeFragmentPage extends Fragment{
 		
 		
 		
-		RequestUtils.startStringRequest(Method.GET,mQueue, "http://www.baidu.com",new ResponseHandlerInterface(){
+		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {

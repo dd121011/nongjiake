@@ -6,7 +6,9 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -31,17 +33,18 @@ import com.android.volley.toolbox.Volley;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
-import com.yunmeike.MApplication;
 import com.njk.R;
-import com.yunmeike.activity.ShopMapListActivity;
+import com.yunmeike.MApplication;
 import com.yunmeike.activity.ShopDetailsActivity;
+import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
+import com.yunmeike.net.utils.RequestCommandEnum;
+import com.yunmeike.net.utils.RequestUtils;
+import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Config;
-import com.yunmeike.utils.RequestUtils;
-import com.yunmeike.utils.RequestUtils.ResponseHandlerInterface;
 
 public class NearFragmentPage extends Fragment implements OnClickListener{
 	private static String TAG="NearFragmentPage";
@@ -125,7 +128,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			mPtrFrame.setPtrHandler(new PtrHandler() {
 			   @Override
 			   public void onRefreshBegin(PtrFrameLayout frame) {
-			        new GetDataTask().execute();
+//			        new GetDataTask().execute();
+				   startGetData();
 			   }
 			
 			   @Override
@@ -199,9 +203,11 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 
 	public void startGetData(){
 		
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("offset", 1+"");
+		params.put("per_page", 1+"");
 		
-		
-		RequestUtils.startStringRequest(Method.GET,mQueue, "http://www.baidu.com",new ResponseHandlerInterface(){
+		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {
@@ -217,7 +223,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 				Log.e(TAG, error);  
 			}
 			
-		},null);
+		},params);
 
 	}
 	
