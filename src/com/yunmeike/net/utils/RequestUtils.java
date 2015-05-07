@@ -86,10 +86,12 @@ public class RequestUtils {
 	}
 	
 	protected static Map<String, String> initParams(Map<String, String> params) {
+		//设置基础参数
 		Map<String, String> map = new HashMap<String, String>();  
 		map.put("source", "2");
-		//设置基础参数
-		map.putAll(params);
+		if(params!=null){
+			map.putAll(params);
+		}
 		return map;
 	}
 

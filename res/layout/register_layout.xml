@@ -27,6 +27,7 @@
                 android:src="@drawable/phone_icon" />
 
             <EditText
+                android:id="@+id/phone_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/content_margin_outside"

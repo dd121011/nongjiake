@@ -6,7 +6,9 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -122,7 +124,10 @@ public class EncircleHotFragmentPage extends Fragment {
 	}
 
 	public void startGetData() {
-
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("offset", 1+"");
+		params.put("per_page", 1+"");
+		
 		RequestUtils.startStringRequest(Method.GET, mQueue,
 				RequestCommandEnum.FAMILY_LIST, new ResponseHandlerInterface() {
 
@@ -140,7 +145,7 @@ public class EncircleHotFragmentPage extends Fragment {
 						Log.e(TAG, error);
 					}
 
-				}, null);
+				}, params);
 
 	}
 

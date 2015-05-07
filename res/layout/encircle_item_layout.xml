@@ -83,13 +83,17 @@
             android:layout_marginLeft="@dimen/content_margin_inside"
             android:text="张静己"
             android:textColor="@color/text_color2"
-            android:textSize="@dimen/text_size3" />
-
+            android:textSize="@dimen/text_size3" 
+            android:layout_weight="1"/>
+		<ImageView 
+		    android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/zan_icon"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/content_margin_inside"
-            android:text="550345"
+            android:text="推荐"
             android:textColor="@color/text_color3"
             android:textSize="@dimen/text_size5" />
     </LinearLayout>

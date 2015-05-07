@@ -106,21 +106,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/item_img"
-            android:background="#66000000"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/content_margin_outside"
             android:paddingLeft="@dimen/content_margin_inside"
             android:paddingRight="@dimen/content_margin_inside"
-            android:paddingTop="@dimen/content_margin_outside" >
+            android:paddingTop="@dimen/content_margin_outside"
+            android:layout_below="@id/item_img" >
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="王小二农家院"
-                android:textColor="@color/text_color0"
+                android:textColor="@color/text_color2"
                 android:textSize="@dimen/text_size0" />
 
             <ImageView
@@ -135,7 +134,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="￥234"
-                android:textColor="@color/text_color0"
+                android:textColor="@color/text_color2"
                 android:textSize="@dimen/text_size5" />
 
             <View
@@ -157,7 +156,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="550345"
-                android:textColor="@color/text_color0"
+                android:textColor="@color/text_color2"
                 android:textSize="@dimen/text_size5" />
         </LinearLayout>
     </RelativeLayout>

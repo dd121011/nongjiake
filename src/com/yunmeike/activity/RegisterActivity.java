@@ -1,42 +1,59 @@
 package com.yunmeike.activity;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.android.volley.Request.Method;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+import com.njk.R;
 import com.yunmeike.BaseActivity;
 import com.yunmeike.MApplication;
-import com.njk.R;
+import com.yunmeike.net.utils.RequestCommandEnum;
+import com.yunmeike.net.utils.RequestUtils;
+import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
 
-public class RegisterActivity extends BaseActivity implements OnClickListener{
-	
+public class RegisterActivity extends BaseActivity implements OnClickListener {
+	private static final String TAG = "TAG";
 	private static final int GET_VERIFY_CODE = 1;
-	
+
 	private TextView getVerifyCodeBtn;
-	
+	private EditText phone_text;
+
 	private int timeMax = 6;
 	private int offsetTime = timeMax;
-	
+
 	Context context;
-	
-	private Handler handler = new Handler(){
+	RequestQueue mQueue;
+
+	private Handler handler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GET_VERIFY_CODE:
-				if(offsetTime>0){
-					getVerifyCodeBtn.setText((offsetTime--)+"s");
+				if (offsetTime > 0) {
+					getVerifyCodeBtn.setText((offsetTime--) + "s");
 					handler.sendEmptyMessageDelayed(GET_VERIFY_CODE, 1000);
-				}else{
+				} else {
 					getVerifyCodeBtn.setText("获取验证码");
 					offsetTime = timeMax;
 				}
@@ -46,7 +63,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 				break;
 			}
 		}
-		
+
 	};
 
 	@Override
@@ -54,15 +71,19 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		context = this;
+
 		View rootView = LayoutInflater.from(this).inflate(R.layout.register_layout, null);
 		setContentView(rootView);
 		Utils.showTopBtn(rootView, "注册", TOP_BTN_MODE.SHOWBACK, "", "");
 		findViewById(R.id.back_btn).setOnClickListener(this);
 		findViewById(R.id.next_btn).setOnClickListener(this);
-		
+
+		phone_text = (EditText) findViewById(R.id.phone_text);
+
 		getVerifyCodeBtn = (TextView) findViewById(R.id.get_verify_code);
-		getVerifyCodeBtn.setOnClickListener(this);;
-	        
+		getVerifyCodeBtn.setOnClickListener(this);
+		;
+		mQueue = Volley.newRequestQueue(context);
 	}
 
 	@Override
@@ -79,9 +100,14 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 			app.addLoginAcitivity(this);
 			break;
 		case R.id.get_verify_code:
-			if(offsetTime == timeMax ){
-				handler.sendEmptyMessageDelayed(GET_VERIFY_CODE, 1000);
+			String str = phone_text.getText().toString();
+			if(!TextUtils.isEmpty(str)){
+				if(offsetTime == timeMax ){
+					handler.sendEmptyMessageDelayed(GET_VERIFY_CODE, 1000);
+					getVerifyCode(str);
+				}
 			}
+
 			break;
 		default:
 			break;
@@ -89,4 +115,37 @@ public class RegisterActivity extends BaseActivity implements OnClickListener{
 		
 	}
 
+	public void getVerifyCode(String num) {
+
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("mobile", num);
+
+		RequestUtils.startStringRequest(Method.GET, mQueue, RequestCommandEnum.SEND_CODE_DO, new ResponseHandlerInterface() {
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				Log.d(TAG, response);
+				try {
+					JSONObject obj = new JSONObject(response);
+					if(obj.has("code")){
+						String codeText = obj.getString("code");
+						if("0".equals(codeText)){
+							
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);
+			}
+
+		}, params);
+
+	}
 }

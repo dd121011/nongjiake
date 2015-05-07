@@ -38,7 +38,7 @@
                     android:textColor="@color/text_color1"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="活动"/>
+                    android:text="农家超实惠"/>
                 
                 <TextView
                     android:layout_width="fill_parent"
@@ -69,7 +69,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/cheap_icon" />
+                android:src="@drawable/strategy_icon" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -84,7 +84,7 @@
                     android:textColor="@color/text_color1"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="优惠"/>
+                    android:text="农家旅游攻略"/>
                 
                 <TextView
                     android:layout_width="fill_parent"
@@ -102,7 +102,8 @@
             android:layout_height="1dip"
             android:layout_marginBottom="@dimen/content_margin_outside"
             android:layout_marginTop="@dimen/content_margin_outside"
-            android:background="@color/text_color6" />
+            android:background="@color/text_color6" 
+            android:visibility="gone"/>
         
         
         <LinearLayout
@@ -110,7 +111,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" 
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -176,7 +178,7 @@
                     android:textColor="@color/text_color1"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:text="养身堂"/>
+                    android:text="野味超市"/>
                 
                 <TextView
                     android:layout_width="fill_parent"
