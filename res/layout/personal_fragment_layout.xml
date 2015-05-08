@@ -31,7 +31,7 @@
                     android:id="@+id/face_layout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/content_margin_vertical">
+                    android:layout_marginTop="@dimen/content_margin_vertical" >
 
                     <ImageView
                         android:layout_width="fill_parent"
@@ -52,6 +52,7 @@
                         app:sriv_right_bottom_corner_radius="16dip"
                         app:sriv_right_top_corner_radius="0dip" />
                 </RelativeLayout>
+
                 <TextView
                     android:id="@+id/personal_name"
                     android:layout_width="wrap_content"
@@ -62,22 +63,23 @@
                     android:text="13898765766"
                     android:textColor="@color/text_color0"
                     android:textSize="@dimen/text_size0" />
+
                 <TextView
                     android:id="@+id/sign_text"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@id/personal_info_bg"
+                    android:layout_below="@id/personal_name"
                     android:layout_marginBottom="@dimen/content_margin_vertical"
+                    android:layout_marginTop="@dimen/content_margin_vertical"
                     android:ellipsize="end"
+                    android:gravity="center_horizontal"
                     android:lineSpacingExtra="@dimen/content_margin_inside"
                     android:maxLines="2"
                     android:paddingLeft="@dimen/content_margin_outside"
                     android:paddingRight="@dimen/content_margin_outside"
-                    android:text="签名：美丽生活从这里开始哦，喜欢做都是丽人的风格哦，赶紧过来哦！"
+                    android:text="我在农家乐，大家赶紧来！"
                     android:textColor="@color/text_color0"
                     android:textSize="@dimen/text_size2" />
-
-
             </RelativeLayout>
 
             <LinearLayout
@@ -86,6 +88,7 @@
                 android:background="@color/text_color0" >
 
                 <LinearLayout
+                    android:id="@+id/nongjia_you"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -108,6 +111,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/favorites_nongjia"
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -146,7 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/content_margin_inside"
-                        android:text="收藏美发师"
+                        android:text="邀请好友"
                         android:textColor="@color/text_color3"
                         android:textSize="@dimen/text_size5" />
                 </LinearLayout>
@@ -157,7 +161,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/content_margin_outside"
                 android:background="@color/text_color0"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -223,7 +228,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/content_margin_outside"
                 android:background="@color/text_color0"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:visibility="gone" >
 
                 <LinearLayout
                     android:layout_width="fill_parent"
@@ -292,6 +298,40 @@
                 android:orientation="vertical" >
 
                 <LinearLayout
+                    android:id="@+id/add_nongjiayuan"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/content_margin_outside" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/add_shop_icon" />
+
+                    <TextView
+                        android:layout_width="0dip"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/content_margin_vertical"
+                        android:layout_weight="1"
+                        android:text="添加农家院"
+                        android:textColor="@color/text_color2"
+                        android:textSize="@dimen/text_size1" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/next_cion" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:layout_marginLeft="@dimen/content_margin_outside"
+                    android:background="@color/text_color6" />
+
+                <LinearLayout
+                    android:id="@+id/more_btn"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"

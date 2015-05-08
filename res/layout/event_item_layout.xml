@@ -64,7 +64,7 @@
                     android:layout_width="0dip"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="10年店庆活动啦！"
+                    android:text="活动时间：8-29-31"
                     android:textColor="@color/text_color1"
                     android:textSize="@dimen/text_size0" />
 
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/event_get_btn"
-                    android:text="立即领取"
+                    android:text="去看看"
                     android:textColor="@color/text_color0"
                     android:textSize="@dimen/text_size1" />
             </LinearLayout>

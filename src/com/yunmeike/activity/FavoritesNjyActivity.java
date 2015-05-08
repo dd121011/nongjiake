@@ -18,22 +18,21 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.njk.R;
 import com.yunmeike.BaseActivity;
 import com.yunmeike.Global;
-import com.njk.R;
-import com.yunmeike.adapter.EventListAdapter;
+import com.yunmeike.adapter.FavoritesListAdapter;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
 
-public class EventListActivity extends BaseActivity implements
-		OnClickListener {
+public class FavoritesNjyActivity extends BaseActivity implements OnClickListener{
 
 	private ListView listView;
 
 	private Activity context;
 	private LinkedList<String> mListItems;
 	private PtrClassicFrameLayout mPtrFrame;
-	private EventListAdapter mAdapter;
+	private FavoritesListAdapter mAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +40,9 @@ public class EventListActivity extends BaseActivity implements
 		super.onCreate(savedInstanceState);
 		context = this;
 		View rootView = LayoutInflater.from(context).inflate(
-				R.layout.event_list_layout, null);
+				R.layout.favorites_list_layout, null);
 		setContentView(rootView);
-		Utils.showTopBtn(rootView, "农家超实惠", TOP_BTN_MODE.SHOWBACK,"","");
+		Utils.showTopBtn(rootView, "收藏农家院", TOP_BTN_MODE.SHOWBACK,"","");
 		rootView.findViewById(R.id.back_btn).setOnClickListener(this);
 		
 		listView = (ListView) rootView
@@ -52,7 +51,7 @@ public class EventListActivity extends BaseActivity implements
 
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(Global.mStrings3));
-		mAdapter = new EventListAdapter(context, mListItems);
+		mAdapter = new FavoritesListAdapter(context, mListItems);
 		listView.setAdapter(mAdapter);
 
 		mPtrFrame = (PtrClassicFrameLayout) rootView

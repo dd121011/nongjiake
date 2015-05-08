@@ -17,6 +17,7 @@ import com.yunmeike.fragment.DiscoverFragmentPage;
 import com.yunmeike.fragment.EncircleFragmentPage;
 import com.yunmeike.fragment.NearFragmentPage;
 import com.yunmeike.fragment.PersonalFragmentBarberPage;
+import com.yunmeike.fragment.PersonalFragmentPage;
 import com.yunmeike.photo.util.Res;
 import com.yunmeike.utils.DialogUtil;
 import com.yunmeike.utils.LocalDisplay;
@@ -41,9 +42,9 @@ public class MainTabActivity extends BaseActivity{
 //									 R.drawable.tab_subscribe_btn,R.drawable.tab_user_btn};
 //	//Tab选项卡的文字
 //	private String[] mTextviewArray = {"附近", "发现", "炫美圈", "预约单", "我的"};
-	private Class[] fragmentArray = {NearFragmentPage.class,DiscoverFragmentPage.class,EncircleFragmentPage.class,PersonalFragmentBarberPage.class};
+	private Class[] fragmentArray = {NearFragmentPage.class,DiscoverFragmentPage.class,EncircleFragmentPage.class,PersonalFragmentPage.class};
 	private int[] mImageViewArray = {R.drawable.tab_near_btn,R.drawable.tab_discover_btn,R.drawable.tab_encircle_btn,R.drawable.tab_user_btn};
-	private String[] mTextviewArray = {"附近", "发现", "炫美圈", "我的"};
+	private String[] mTextviewArray = {"附近", "发现", "晒农家", "我的"};
 	
 	
 	public void onCreate(Bundle savedInstanceState) {
