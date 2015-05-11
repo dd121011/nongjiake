@@ -49,7 +49,7 @@ public class TravelNotesListAdapter extends BaseAdapter {
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
 		// TODO Auto-generated method stub
 		if(arg1 == null){
-			arg1 = LayoutInflater.from(context).inflate(R.layout.shop_remark_item, null);
+			arg1 = LayoutInflater.from(context).inflate(R.layout.travel_notes_item, null);
 		}
 //		ImageView item_img = ViewHolder.get(arg1, R.id.combo_item_img);
 //		

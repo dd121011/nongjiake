@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.njk.R;
+import com.yunmeike.activity.AddNjyActivity;
 import com.yunmeike.activity.FavoritesNjyActivity;
 import com.yunmeike.activity.MoreActivity;
 import com.yunmeike.activity.TravelNotesActivity;
@@ -72,7 +73,8 @@ public class PersonalFragmentPage extends Fragment implements OnClickListener{
 			startActivity(intent);
 			break;
 		case R.id.add_nongjiayuan:
-			
+			intent = new Intent(activity,AddNjyActivity.class);
+			startActivity(intent);
 			break;
 		case R.id.more_btn:
 			intent = new Intent(activity,MoreActivity.class);

@@ -7,7 +7,7 @@
         android:id="@+id/title_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/top_title_background"
+        android:background="#69b11b"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
 
@@ -61,7 +61,7 @@
                     android:layout_height="@dimen/content_margin_inside"
                     android:layout_marginTop="2dip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/photo_num_bg" />
+                    android:src="@drawable/encircle_switch_dotted" />
             </LinearLayout>
 
             <LinearLayout
@@ -87,7 +87,7 @@
                     android:layout_height="@dimen/content_margin_inside"
                     android:layout_marginTop="2dip"
                     android:scaleType="fitXY"
-                    android:src="@drawable/photo_num_bg"
+                    android:src="@drawable/encircle_switch_dotted"
                     android:visibility="invisible" />
             </LinearLayout>
         </LinearLayout>
