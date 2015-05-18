@@ -1,6 +1,6 @@
 package com.yunmeike.adapter;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -11,25 +11,26 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.njk.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
-import com.njk.R;
+import com.yunmeike.bean.NearBean;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.view.CustomListView;
 import com.yunmeike.view.ViewHolder;
 
 public class NearListAdapter extends BaseAdapter {
 	private Activity context;
-	private LinkedList mListItems;
+	private List<NearBean> nearBeanList;
 	
 	private DisplayImageOptions options;	
 	
 	private ViewGroup.LayoutParams layoutParams;
 	
-	public NearListAdapter(Activity context, LinkedList mListItems) {
+	public NearListAdapter(Activity context, List<NearBean> nearBeanList) {
 		this.context = context;
-		this.mListItems = mListItems;
+		this.nearBeanList = nearBeanList;
 		
 		options = new DisplayImageOptions.Builder()
 		.showImageOnLoading(R.drawable.face_test1)
@@ -50,13 +51,13 @@ public class NearListAdapter extends BaseAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return mListItems.size();
+		return nearBeanList.size();
 	}
 
 	@Override
 	public Object getItem(int arg0) {
 		// TODO Auto-generated method stub
-		return mListItems.get(arg0);
+		return nearBeanList.get(arg0);
 	}
 
 	@Override
@@ -67,7 +68,9 @@ public class NearListAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
-		// TODO Auto-generated method stub
+		
+		NearBean item = nearBeanList.get(arg0);
+		
 		if(arg1 == null){
 			arg1 = LayoutInflater.from(context).inflate(R.layout.near_item_layout, null);
 		}
@@ -84,6 +87,9 @@ public class NearListAdapter extends BaseAdapter {
 		
 		CustomListView list = ViewHolder.get(arg1, R.id.list_layout);
 		list.setAdapter(new TextAdapter(context, textArra));
+		
+		TextView titleText = ViewHolder.get(arg1, R.id.title_text);
+		titleText.setText(item.title);
 		
 		return arg1;
 	}

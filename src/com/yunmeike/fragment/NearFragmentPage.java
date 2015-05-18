@@ -5,15 +5,18 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -33,12 +38,15 @@ import com.android.volley.toolbox.Volley;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.njk.R;
 import com.yunmeike.MApplication;
 import com.yunmeike.activity.ShopDetailsActivity;
 import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
+import com.yunmeike.bean.NearBean;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
 import com.yunmeike.net.utils.RequestCommandEnum;
@@ -48,11 +56,14 @@ import com.yunmeike.utils.Config;
 
 public class NearFragmentPage extends Fragment implements OnClickListener{
 	private static String TAG="NearFragmentPage";
+	public final static int UPDATE_DATA_LIST = 1;
+	public final static int MORE_DATE_LIST = 2;
+	public final static int UPATE_LIST_LAYOUT = 3;
 	
 	private View rootView;
 	private ListView listView ;
 	private TextView currCity;
-	private LinkedList<String> mListItems;
+	private List<NearBean> nearBeanList;
 	private PtrClassicFrameLayout mPtrFrame;
 	private NearListAdapter mAdapter;
 	
@@ -63,6 +74,41 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	private LocationClient mLocationClient;
 	
 	private CurrCityManager cityManger;
+	
+	private int offset = 0;
+	private int per_page = 5;
+	
+	private Handler handler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case UPDATE_DATA_LIST:
+				List<NearBean> dataList = (List<NearBean>) msg.getData().getSerializable("data");
+				if(offset == 0){
+					nearBeanList.clear();
+				}
+				offset = per_page;
+				nearBeanList.addAll(dataList);
+				handler.sendEmptyMessage(UPATE_LIST_LAYOUT);
+				break;
+			case MORE_DATE_LIST:
+				offset += per_page;
+				List<NearBean> moreList = (List<NearBean>) msg.getData().getSerializable("data");
+				nearBeanList.addAll(moreList);
+				handler.sendEmptyMessage(UPATE_LIST_LAYOUT);
+				break;
+			case UPATE_LIST_LAYOUT:				 
+				mPtrFrame.refreshComplete();
+				mAdapter.notifyDataSetChanged();
+				break;
+
+			default:
+				break;
+			}
+		}
+		
+	};
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -116,19 +162,32 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			cityManger = CurrCityManager.getInstance();
 			cityManger.registerChangerCurrCityListener(currCityListener);
 			
-			mListItems = new LinkedList<String>();
-			mListItems.addAll(Arrays.asList(mStrings));
-			mAdapter = new NearListAdapter(getActivity(), mListItems);
+			nearBeanList = new ArrayList<NearBean>();
+			mAdapter = new NearListAdapter(getActivity(), nearBeanList);
 			
 			listView.setAdapter(mAdapter);
 			
+			listView.setOnScrollListener(new OnScrollListener() {
+				
+				@Override
+				public void onScrollStateChanged(AbsListView view, int scrollState) {}
+				
+				@Override
+				public void onScroll(AbsListView view, int firstVisibleItem,
+						int visibleItemCount, int totalItemCount) {
+					if(firstVisibleItem == (totalItemCount - 2)){
+						startGetData();
+					}
+					
+				}
+			});
 			
 			mPtrFrame = (PtrClassicFrameLayout) rootView.findViewById(R.id.rotate_header_list_view_frame);
 			mPtrFrame.setLastUpdateTimeRelateObject(this);
 			mPtrFrame.setPtrHandler(new PtrHandler() {
 			   @Override
 			   public void onRefreshBegin(PtrFrameLayout frame) {
-//			        new GetDataTask().execute();
+				   offset = 0;
 				   startGetData();
 			   }
 			
@@ -204,8 +263,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	public void startGetData(){
 		
 		Map<String, String> params = new HashMap<String, String>(); 
-		params.put("offset", 1+"");
-		params.put("per_page", 1+"");
+		params.put("offset", offset+"");
+		params.put("per_page", per_page+"");
 		
 		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
@@ -213,8 +272,30 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			public void handlerSuccess(String response) {
 				// TODO Auto-generated method stub
 				 Log.d(TAG, response); 
-				 mPtrFrame.refreshComplete();
-                 mAdapter.notifyDataSetChanged();
+				 
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+							 ArrayList<NearBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<NearBean>>(){}.getType());
+							 Bundle data = new Bundle();
+							 data.putSerializable("data", dataList);
+							 Message msg = null;
+							 if(offset == 0){
+								 msg = handler.obtainMessage(UPDATE_DATA_LIST);
+							 }else{
+								 msg = handler.obtainMessage(MORE_DATE_LIST);
+							 }
+							 msg.setData(data);
+							 msg.sendToTarget();
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
 
 			@Override
@@ -227,28 +308,6 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 
 	}
 	
-	
-	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
-
-		@Override
-		protected String[] doInBackground(Void... params) {
-			// Simulates a background job.
-			try {
-				Thread.sleep(4000);
-			} catch (InterruptedException e) {
-			}
-			return mStrings;
-		}
-
-		@Override
-		protected void onPostExecute(String[] result) {
-			mListItems.addFirst("Added after refresh...");
-			mPtrFrame.refreshComplete();
-            mAdapter.notifyDataSetChanged();
-
-			super.onPostExecute(result);
-		}
-	}
 	
 	class SwitchOnClickListener implements OnClickListener{
 
@@ -282,12 +341,6 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		}
 		
 	}
-	
-	private String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
-			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
-			"Allgauer Emmentaler", "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
-			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
-			"Allgauer Emmentaler" };
 
 
 	@Override
