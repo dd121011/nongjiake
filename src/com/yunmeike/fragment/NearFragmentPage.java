@@ -260,8 +260,12 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		super.onStop();
 	}
 
+	private boolean isStart = false;
 	public void startGetData(){
-		
+		if(isStart){
+			return;
+		}
+		isStart = true;
 		Map<String, String> params = new HashMap<String, String>(); 
 		params.put("offset", offset+"");
 		params.put("per_page", per_page+"");
@@ -272,7 +276,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			public void handlerSuccess(String response) {
 				// TODO Auto-generated method stub
 				 Log.d(TAG, response); 
-				 
+				 isStart = false;
 				 try {
 					if(!TextUtils.isEmpty(response)){
 						 JSONObject obj = new JSONObject(response);
@@ -302,6 +306,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			public void handlerError(String error) {
 				// TODO Auto-generated method stub
 				Log.e(TAG, error);  
+				isStart = false;
 			}
 			
 		},params);

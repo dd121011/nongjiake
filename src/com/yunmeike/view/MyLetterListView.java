@@ -1,14 +1,16 @@
 package com.yunmeike.view;
 
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
-import android.text.style.TypefaceSpan;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.njk.R;
 
 public class MyLetterListView extends View
 {
@@ -51,7 +53,7 @@ public class MyLetterListView extends View
 			paint.setColor(Color.WHITE);
 			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			paint.setAntiAlias(true);
-			paint.setTextSize(25);
+			paint.setTextSize(getResources().getDimension(R.dimen.letter_text_size));
 			if (i == choose)
 			{
 				paint.setColor(Color.parseColor("#3399ff"));

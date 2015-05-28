@@ -9,6 +9,7 @@
     <!-- 选择图片 -->
     <dimen name="ui_10_dip">10dip</dimen> 
 
+    <dimen name="letter_text_size">14sp</dimen>
 
 	<dimen name="text_size0">17sp</dimen>
 	<dimen name="text_size1">16sp</dimen>

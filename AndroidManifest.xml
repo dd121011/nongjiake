@@ -161,7 +161,7 @@
         <!-- meta-data需要写在application中 -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="MHEjAGtsA4T3NBc6bIvN3AR8" />
+            android:value="gZ5GSIkHPXAMojmrVbnOounD" />
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
