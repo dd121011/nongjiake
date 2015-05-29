@@ -9,6 +9,13 @@
     <!-- 选择图片 -->
     <dimen name="ui_10_dip">10dip</dimen> 
 
+    <!-- PinnedHeaderListView -->
+    <dimen name="selectcity_group_item_padding">14dp</dimen>
+    <dimen name="bladeview_popup_height">80dp</dimen>
+    <dimen name="bladeview_fontsize">12sp</dimen>
+    <dimen name="bladeview_popup_fontsize">20sp</dimen>
+    
+    
     <dimen name="letter_text_size">14sp</dimen>
 
 	<dimen name="text_size0">17sp</dimen>

@@ -42,5 +42,10 @@
 
     <bool name="default_circle_indicator_centered">true</bool>
     <bool name="default_circle_indicator_snap">false</bool>
+    
+     <!-- PinnedHeaderListView -->
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="gray">#CACACA</color>
 
 </resources>

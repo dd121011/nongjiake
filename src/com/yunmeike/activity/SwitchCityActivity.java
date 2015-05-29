@@ -1,6 +1,11 @@
 package com.yunmeike.activity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +21,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -37,65 +37,108 @@ import com.google.gson.reflect.TypeToken;
 import com.njk.R;
 import com.yunmeike.BaseActivity;
 import com.yunmeike.MApplication;
-import com.yunmeike.adapter.CityListAdapter;
 import com.yunmeike.bean.ProvinceBean;
-import com.yunmeike.db.CityModel;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
 import com.yunmeike.net.utils.RequestCommandEnum;
 import com.yunmeike.net.utils.RequestUtils;
 import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
+import com.yunmeike.pinnedheaderlistView.BladeView;
+import com.yunmeike.pinnedheaderlistView.BladeView.OnItemClickBladeListener;
+import com.yunmeike.pinnedheaderlistView.City;
+import com.yunmeike.pinnedheaderlistView.CityDao;
+import com.yunmeike.pinnedheaderlistView.CityListAdapter;
+import com.yunmeike.pinnedheaderlistView.DBHelper;
+import com.yunmeike.pinnedheaderlistView.MySectionIndexer;
+import com.yunmeike.pinnedheaderlistView.PinnedHeaderListView;
 import com.yunmeike.utils.Config;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
-import com.yunmeike.view.MyLetterListView;
-import com.yunmeike.view.MyLetterListView.OnTouchingLetterChangedListener;
 
 public class SwitchCityActivity extends BaseActivity implements OnClickListener {
-	private String  TAG = "SwitchCityActivity";
-	private ListView listView;
-	private View hint_city_layout;
-	private TextView overlay,alpha,name;
-	private MyLetterListView letterListView;
-	private HashMap<String, Integer> alphaIndexer;// 存放存在的汉语拼音首字母和与之对应的列表位置
-	private String[] sections;// 存放存在的汉语拼音首字母
-	private OverlayThread overlayThread;
+	private String TAG = "SwitchCityActivity";
 
 	private Activity context;
-	private CityListAdapter adapter;
-	private ArrayList<CityModel> mCityNames;
-	
-//	private SQLiteDatabase database;
-	
+
 	private CurrCityManager cityManger;
-	
+
 	private LocationClient mLocationClient;
 	private LocationMode tempMode = LocationMode.Hight_Accuracy;
-	private String tempcoor="gcj02";
+	private String tempcoor = "gcj02";
 
-	
 	private final static int GET_CITY_DATA_SUCCES = 1;
-	
+	private final static int UPDATE_CITY_LIST = 2;
+
+	private static final int COPY_DB_SUCCESS = 10;
+	private static final int COPY_DB_FAILED = 11;
+	protected static final int QUERY_CITY_FINISH = 12;
+	private MySectionIndexer mIndexer;
+
+	private List<City> cityList = new ArrayList<City>();
+	private DBHelper helper;
+
+	private CityListAdapter mAdapter;
+	private static final String ALL_CHARACTER = "定热#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	private String[] sections = {"定位城市","热门城市", "#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" };
+	private int[] counts;
+	private PinnedHeaderListView mListView;
 	private RequestQueue mQueue;
-	
-	private Handler handler = new Handler(){
+
+	private Handler handler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GET_CITY_DATA_SUCCES:
-				List<ProvinceBean> dataList = (List<ProvinceBean>) msg.getData().getSerializable("data");
-				Toast.makeText(context, "dataList :"+(dataList==null?("null"):dataList.size()), 1000).show();
-				mCityNames = getCityNames(dataList);
-				setAdapter(mCityNames);
-				listView.setOnItemClickListener(new CityListOnItemClick());	
+
+				break;
+			case QUERY_CITY_FINISH:
+
+				if (mAdapter == null) {
+
+					mIndexer = new MySectionIndexer(sections, counts);
+
+					mAdapter = new CityListAdapter(cityList, mIndexer, getApplicationContext());
+					mListView.setAdapter(mAdapter);
+
+					mListView.setOnScrollListener(mAdapter);
+
+					// 設置頂部固定頭部
+					mListView.setPinnedHeaderView(LayoutInflater.from(getApplicationContext()).inflate(R.layout.list_group_item, mListView, false));
+
+					mListView.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+							cityManger.setCurrCity(context, cityList.get(arg2).getName());
+							context.finish();							
+						}
+					});
+					
+				} else if (mAdapter != null) {
+					mAdapter.notifyDataSetChanged();
+				}
+
 				break;
 
+			case COPY_DB_SUCCESS:
+				requestData();
+				break;
+			case UPDATE_CITY_LIST:
+				String city = Config.getLocationCity(context);
+				if(city!=null && cityList!=null && cityList.size()>0){
+					City item = cityList.get(0);
+					item.setName(city);
+				}
+				if (mAdapter != null) {
+					mAdapter.notifyDataSetChanged();
+				}
+				break;
 			default:
 				break;
 			}
 		}
-		
+
 	};
 
 	@Override
@@ -103,253 +146,220 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		context = this;
-		mQueue = Volley.newRequestQueue(context);  
-		
-		View rootView = LayoutInflater.from(context).inflate(
-				R.layout.switch_city_layout, null);
+		mQueue = Volley.newRequestQueue(context);
+
+		View rootView = LayoutInflater.from(context).inflate(R.layout.switch_city_layout, null);
 		setContentView(rootView);
-		Utils.showTopBtn(rootView, "城市切换", TOP_BTN_MODE.SHOWBACK,"","");
+		Utils.showTopBtn(rootView, "城市切换", TOP_BTN_MODE.SHOWBACK, "", "");
 		rootView.findViewById(R.id.back_btn).setOnClickListener(this);
-		
-		listView = (ListView) rootView.findViewById(R.id.city_list);
-		listView.setOnScrollListener(scrollListener);
-		
-		//列表头部提示索引
-		hint_city_layout = rootView.findViewById(R.id.hint_city_layout);
-		alpha = (TextView) hint_city_layout.findViewById(R.id.alpha);
-		name = (TextView) hint_city_layout.findViewById(R.id.name);
-		
-		overlay = (TextView) rootView.findViewById(R.id.overlay);
-		letterListView = (MyLetterListView) findViewById(R.id.cityLetterListView);
-		letterListView.setOnTouchingLetterChangedListener(new LetterListViewListener());
-		
-//		DBManager dbManager = new DBManager(this);
-//		dbManager.openDateBase();
-//		dbManager.closeDatabase();
-//		database = SQLiteDatabase.openOrCreateDatabase(DBManager.DB_PATH + "/"
-//				+ DBManager.DB_NAME, null);
-		
-		// database.close();
-		
-		alphaIndexer = new HashMap<String, Integer>();
-		overlayThread = new OverlayThread();
-			
+
+		helper = new DBHelper();
+
+		copyDBFile();
+		findView();
 		
 		cityManger = CurrCityManager.getInstance();
-		cityManger.registerChangerCurrCityListener(currCityListener);
-		
-		startGetCityData();
+		initLocationCity();
 	}
 
-	private void initLocationCity() {	
-        String city = Config.getLocationCity(context);
-        if(TextUtils.isEmpty(city)){
-    		mLocationClient = ((MApplication)getApplication()).mLocationClient;
-    		InitLocation();
-    		mLocationClient.registerLocationListener(bdLocationListener);
-    		mLocationClient.start();
-        };
+	private void copyDBFile() {
+
+		File file = new File(CityDao.APP_DIR + "/city.db");
+		if (file.exists()) {
+			requestData();
+
+		} else { // 拷贝文件
+			Runnable task = new Runnable() {
+
+				@Override
+				public void run() {
+
+					copyAssetsFile2SDCard("city.db");
+				}
+			};
+
+			new Thread(task).start();
+		}
+	}
+
+	/**
+	 * 拷贝资产目录下的文件到 手机
+	 */
+	private void copyAssetsFile2SDCard(String fileName) {
+
+		File desDir = new File(CityDao.APP_DIR);
+		if (!desDir.exists()) {
+			desDir.mkdirs();
+		}
+
+		// 拷贝文件
+		File file = new File(CityDao.APP_DIR + fileName);
+		if (file.exists()) {
+			file.delete();
+		}
+
+		try {
+			InputStream in = getAssets().open(fileName);
+
+			FileOutputStream fos = new FileOutputStream(file);
+
+			int len = -1;
+			byte[] buf = new byte[1024];
+			while ((len = in.read(buf)) > 0) {
+				fos.write(buf, 0, len);
+			}
+
+			fos.flush();
+			fos.close();
+
+			handler.sendEmptyMessage(COPY_DB_SUCCESS);
+		} catch (Exception e) {
+			e.printStackTrace();
+			handler.sendEmptyMessage(COPY_DB_FAILED);
+		}
+	}
+
+	private void requestData() {
+
+		Runnable task = new Runnable() {
+
+			@Override
+			public void run() {
+				CityDao dao = new CityDao(helper);
+
+				City localCity = new City();
+				localCity.setId("");
+				localCity.setName("定位城市");
+				localCity.setPys("定位城市");
+				
+				List<City> hot = dao.getHotCities(); // 热门城市
+				
+				if(hot!=null){
+					for(City item: hot){
+						item.setPys("热门城市");
+					}		
+				}
+
+				
+				List<City> all = dao.getAllCities(); // 全部城市
+
+				if (all != null) {
+
+					Collections.sort(all, new MyComparator()); // 排序
+					cityList.add(localCity);
+					cityList.addAll(hot);
+					cityList.addAll(all);
+
+					// 初始化每个字母有多少个item
+					counts = new int[sections.length];
+
+					counts[0] = 1; 
+					counts[1] = hot.size();// 热门城市 个数
+
+					for (City city : all) { // 计算全部城市
+
+						String firstCharacter = city.getSortKey();
+						int index = ALL_CHARACTER.indexOf(firstCharacter);
+						counts[index]++;
+					}
+
+					handler.sendEmptyMessage(QUERY_CITY_FINISH);
+				}
+			}
+		};
+
+		new Thread(task).start();
+	}
+
+	public class MyComparator implements Comparator<City> {
+
+		@Override
+		public int compare(City c1, City c2) {
+
+			return c1.getSortKey().compareTo(c2.getSortKey());
+		}
 
 	}
 
-	private void InitLocation(){
+	private void findView() {
+
+		mListView = (PinnedHeaderListView) findViewById(R.id.mListView);
+		BladeView mLetterListView = (BladeView) findViewById(R.id.mLetterListView);
+
+		mLetterListView.setOnItemClickListener(new OnItemClickBladeListener() {
+
+			@Override
+			public void onItemClick(String s) {
+				if (s != null) {
+
+					int section = ALL_CHARACTER.indexOf(s);
+
+					int position = mIndexer.getPositionForSection(section);
+
+					Log.i(TAG, "s:" + s + ",section:" + section + ",position:" + position);
+
+					if (position != -1) {
+						mListView.setSelection(position);
+					} else {
+
+					}
+				}
+
+			}
+		});
+	}
+
+	private void initLocationCity() {
+		String city = Config.getLocationCity(context);
+		if (TextUtils.isEmpty(city)) {
+			mLocationClient = ((MApplication) getApplication()).mLocationClient;
+			InitLocation();
+			mLocationClient.registerLocationListener(bdLocationListener);
+			mLocationClient.start();
+		}else{
+			handler.sendEmptyMessage(UPDATE_CITY_LIST);
+		};
+	}
+
+	private void InitLocation() {
 		LocationClientOption option = new LocationClientOption();
-		option.setLocationMode(tempMode);//设置定位模式
-		option.setCoorType(tempcoor);//返回的定位结果是百度经纬度，默认值gcj02
-		int span=1000;
-		option.setScanSpan(span);//设置发起定位请求的间隔时间为5000ms
+		option.setLocationMode(tempMode);// 设置定位模式
+		option.setCoorType(tempcoor);// 返回的定位结果是百度经纬度，默认值gcj02
+		int span = 1000;
+		option.setScanSpan(span);// 设置发起定位请求的间隔时间为5000ms
 		option.setIsNeedAddress(true);
 		mLocationClient.setLocOption(option);
 	}
 
-	/**
-	 * 为ListView设置适配器
-	 * 
-	 * @param list
-	 */
-	private void setAdapter(List<CityModel> list) {
-		if (list != null) {
-			initAlphoIndex(list);
-			adapter = new CityListAdapter(this, list);
-			listView.setAdapter(adapter);
-		}
 
-	}
 
-	private void initAlphoIndex(List<CityModel> list) {
-		alphaIndexer = new HashMap<String, Integer>();
-		sections = new String[list.size()];
 
-		for (int i = 0; i < list.size(); i++) {
-			// 当前汉语拼音首字母
-			// getAlpha(list.get(i));
-			String currentStr = list.get(i).getNameSort();
-			// 上一个汉语拼音首字母，如果不存在为“ ”
-			String previewStr = (i - 1) >= 0 ? list.get(i - 1)
-					.getNameSort() : " ";
-			if (!previewStr.equals(currentStr)) {
-				String name = list.get(i).getNameSort();
-				alphaIndexer.put(name, i);
-				sections[i] = name;
-			}
-		}
-	}
 
-	private ArrayList<CityModel> getCityNames(List<ProvinceBean> dataList) {
-		ArrayList<CityModel> names = new ArrayList<CityModel>();
-		
-		CityModel locCity = new CityModel();
-		locCity.setNameSort("定位城市");
-		String city = Config.getLocationCity(context);
-        if(TextUtils.isEmpty(city)){
-        	locCity.setCityName("点击开始定位当前位置");
-        	initLocationCity();
-        }else{
-        	locCity.setCityName(city);
-        };
-		
-		names.add(locCity);
-		names.addAll(Config.getHotCityList());
-		
-//		Cursor cursor = database.rawQuery(
-//				"SELECT * FROM T_city ORDER BY CityName", null);
-//		for (int i = 0; i < cursor.getCount(); i++) {
-//			cursor.moveToPosition(i);
-//			CityModel cityModel = new CityModel();
-//			cityModel.setCityName(cursor.getString(cursor
-//					.getColumnIndex("AllNameSort")));
-//			cityModel.setNameSort(cursor.getString(cursor
-//					.getColumnIndex("CityName")));
-//			names.add(cityModel);
-//		}
-//		cursor.close();
-		
-		if(dataList!=null){
-			for(ProvinceBean item : dataList){
-				CityModel cityItem = new CityModel();
-				locCity.setNameSort("BJS");
-				cityItem.setCityName(item.name);
-				names.add(cityItem);
-			}
-		}
-		return names;
-	}
-	
+
 	@Override
 	protected void onStop() {
 		// TODO Auto-generated method stub
-		if(mLocationClient!=null){
+		if (mLocationClient != null) {
 			mLocationClient.stop();
 		}
 		super.onStop();
 	}
 
-	/**
-	 * 城市列表点击事件
-	 * 
-	 */
-	class CityListOnItemClick implements OnItemClickListener {
-
-		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int pos,
-				long arg3) {
-			CityModel cityModel = (CityModel) listView.getAdapter()
-					.getItem(pos);
-			cityManger.setCurrCity(context, cityModel.getCityName());
-			context.finish();
-		}
-
-	}
-
-	private OnScrollListener scrollListener = new OnScrollListener(){
-
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
-
-
-//			if((firstVisibleItem - 1) >= 0){
-//				CityModel item = mCityNames.get(firstVisibleItem);
-//				CityModel preItem = mCityNames.get(firstVisibleItem-1);
-//				String currentStr = item.getNameSort();
-//				String previewStr = (firstVisibleItem - 1) >= 0 ? mCityNames.get(firstVisibleItem - 1)
-//						.getNameSort() : " ";
-//				if (!previewStr.equals(currentStr)) {
-//					hint_city_layout.setVisibility(View.VISIBLE);
-//					alpha.setVisibility(View.VISIBLE);
-//					name.setVisibility(View.GONE);
-//					alpha.setText(item.getNameSort());
-//				} else {
-//					hint_city_layout.setVisibility(View.GONE);
-//				}
-//			}
-
-	
-		}
-		
-	};
-	
-	private class LetterListViewListener implements OnTouchingLetterChangedListener {
-
-		@Override
-		public void onTouchingLetterChanged(final String s) {
-			if (alphaIndexer.get(s) != null) {
-				int position = alphaIndexer.get(s);
-				listView.setSelection(position);
-				overlay.setText(sections[position]);
-				overlay.setVisibility(View.VISIBLE);
-				handler.removeCallbacks(overlayThread);
-				// 延迟一秒后执行，让overlay为不可见
-				handler.postDelayed(overlayThread, 1500);
-			}
-		}
-
-	}
-	
-	private BDLocationListener bdLocationListener = new BDLocationListener(){
+	private BDLocationListener bdLocationListener = new BDLocationListener() {
 
 		@Override
 		public void onReceiveLocation(final BDLocation arg0) {
-			runOnUiThread(new Runnable() {				
+			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if(arg0!=null){
+					if (arg0 != null) {
 						cityManger.setCurrCity(context, arg0.getCity());
+						handler.sendEmptyMessage(UPDATE_CITY_LIST);
 					}
 				}
-			});			
-		}		
-	};
-	
-	private OnChangerCurrCityListener currCityListener = new OnChangerCurrCityListener(){
-		@Override
-		public void onChangeCurrCity(final String currCity) {	
-			runOnUiThread(new Runnable() {
-				public void run() {
-					if(mCityNames!=null && mCityNames.size()>0){
-						mCityNames.get(0).setCityName(currCity);
-						adapter.notifyDataSetChanged();
-					}
-				}
-			});			
-		}	
-	};
-
-	// 设置overlay不可见
-	private class OverlayThread implements Runnable {
-
-		@Override
-		public void run() {
-			overlay.setVisibility(View.GONE);
+			});
 		}
-
-	}
+	};
 
 	@Override
 	public void onClick(View v) {
@@ -366,33 +376,33 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 
 	}
 
-	
-	public void startGetCityData(){
-		Map<String, String> params = new HashMap<String, String>(); 
-		
-		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.APPINFOS_AREAS,new ResponseHandlerInterface(){
+	public void startGetCityData() {
+		Map<String, String> params = new HashMap<String, String>();
+
+		RequestUtils.startStringRequest(Method.GET, mQueue, RequestCommandEnum.APPINFOS_AREAS, new ResponseHandlerInterface() {
 
 			@Override
 			public void handlerSuccess(String response) {
 				// TODO Auto-generated method stub
-				 Log.d(TAG, response); 
-				 try {
-					if(!TextUtils.isEmpty(response)){
-						 JSONObject obj = new JSONObject(response);
-						 if(obj.has("code") && obj.getString("code").equals("0")){
-							 JSONObject dataObj = obj.getJSONObject("data");
-							 
-							 String jsonArray = dataObj.getString("province");
-							 Gson gson = new Gson();
-							 ArrayList<ProvinceBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<ProvinceBean>>(){}.getType());
-							 Bundle data = new Bundle();
-							 data.putSerializable("data", dataList);
-							 Message msg = null;
-							 msg = handler.obtainMessage(GET_CITY_DATA_SUCCES);
-							 msg.setData(data);
-							 msg.sendToTarget();
-						 }
-					 }
+				Log.d(TAG, response);
+				try {
+					if (!TextUtils.isEmpty(response)) {
+						JSONObject obj = new JSONObject(response);
+						if (obj.has("code") && obj.getString("code").equals("0")) {
+							JSONObject dataObj = obj.getJSONObject("data");
+
+							String jsonArray = dataObj.getString("province");
+							Gson gson = new Gson();
+							ArrayList<ProvinceBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<ProvinceBean>>() {
+							}.getType());
+							Bundle data = new Bundle();
+							data.putSerializable("data", dataList);
+							Message msg = null;
+							msg = handler.obtainMessage(GET_CITY_DATA_SUCCES);
+							msg.setData(data);
+							msg.sendToTarget();
+						}
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -402,10 +412,10 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 			@Override
 			public void handlerError(String error) {
 				// TODO Auto-generated method stub
-				Log.e(TAG, error);  
+				Log.e(TAG, error);
 			}
-			
-		},params);
+
+		}, params);
 
 	}
 }

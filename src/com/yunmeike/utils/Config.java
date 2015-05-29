@@ -9,7 +9,7 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
 import com.yunmeike.Global;
-import com.yunmeike.db.CityModel;
+import com.yunmeike.pinnedheaderlistView.City;
 
 
 public class Config {
@@ -179,18 +179,5 @@ public class Config {
     public static float getFloatPreferences(Context context, String key){
     	SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
     	return sp.getFloat(key, -1);
-    }
-    
-
-    public static List<CityModel> getHotCityList(){
-    	String[] hotCitys = {"北京","上海","广州","深圳","成都","重庆","天津","杭州","南京","苏州","武汉","西安"};
-    	List<CityModel> list = new ArrayList<CityModel>();
-    	for(int i=0;i<hotCitys.length;i++){
-    		CityModel model = new CityModel();
-    		model.setNameSort("热点城市");
-    		model.setCityName(hotCitys[i]);
-    		list.add(model);
-    	}
-    	return list;
     }
 }
