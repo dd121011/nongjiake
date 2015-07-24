@@ -18,11 +18,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ClearCacheRequest;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.StringRequest;
+import com.yunmeike.Global;
 import com.yunmeike.utils.Logger;
 
 public class RequestUtils {
 	private static String TAG="RequestUtils";
-	private static String base = "http://www.nongjiake.net/";
+	private static String base = Global.base_url;
 	
 	
 	public static void startStringRequest(int method, RequestQueue mQueue, RequestCommandEnum urlEnum, final ResponseHandlerInterface responseHandlerInterface,final Map<String, String> params) {
@@ -57,7 +58,7 @@ public class RequestUtils {
 		};
 		stringRequest.setShouldCache(true);
 		mQueue.add(stringRequest);
-		Logger.d(TAG, "url = "+stringRequest.getUrl());
+		Logger.d(TAG, "url = "+stringRequest.getUrl() +"KEY = "+stringRequest.getCacheEntry());
 	}
 	
 

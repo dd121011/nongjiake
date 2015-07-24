@@ -15,6 +15,7 @@ import com.njk.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
+import com.yunmeike.Global;
 import com.yunmeike.bean.NearBean;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.view.CustomListView;
@@ -82,8 +83,9 @@ public class NearListAdapter extends BaseAdapter {
 		itemImg.getLayoutParams().height = layoutParams.height;
 		
 //		ImageView faceImg = ViewHolder.get(arg1, R.id.face_img);
-		ImageLoader.getInstance().displayImage("drawable://" + R.drawable.face_test1, faceImg, options);	
+//		ImageLoader.getInstance().displayImage("drawable://" + R.drawable.face_test1, faceImg, options);	
 		ImageLoader.getInstance().displayImage("http://img0.bdstatic.com/img/image/4a75a05f8041bf84df4a4933667824811426747915.jpg", faceImg, options);
+		ImageLoader.getInstance().displayImage(Global.base_url+item.img, itemImg, options);
 		
 		CustomListView list = ViewHolder.get(arg1, R.id.list_layout);
 		list.setAdapter(new TextAdapter(context, textArra));

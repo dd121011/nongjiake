@@ -59,6 +59,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	public final static int UPDATE_DATA_LIST = 1;
 	public final static int MORE_DATE_LIST = 2;
 	public final static int UPATE_LIST_LAYOUT = 3;
+	public final static int GET_DATE_FAIL = 100;
 	
 	private View rootView;
 	private ListView listView ;
@@ -102,7 +103,9 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 				mPtrFrame.refreshComplete();
 				mAdapter.notifyDataSetChanged();
 				break;
-
+			case GET_DATE_FAIL:
+				mPtrFrame.refreshComplete();
+				break;
 			default:
 				break;
 			}
@@ -307,6 +310,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 				// TODO Auto-generated method stub
 				Log.e(TAG, error);  
 				isStart = false;
+				handler.sendEmptyMessage(GET_DATE_FAIL);
 			}
 			
 		},params);
