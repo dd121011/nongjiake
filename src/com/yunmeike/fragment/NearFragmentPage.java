@@ -12,8 +12,10 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -23,14 +25,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -47,12 +52,22 @@ import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.bean.NearBean;
+import com.yunmeike.category.CategoryMenuAdapter;
+import com.yunmeike.category.CategoryBean;
+import com.yunmeike.category.CategoryGroup;
+import com.yunmeike.category.CategoryListAdapter;
+import com.yunmeike.category.CategoryMenuBean;
+import com.yunmeike.category.CategoryMenuLayout;
+import com.yunmeike.category.CategorySubListAdapter;
+import com.yunmeike.category.CategoryMenuLayout.OnSelectedCategoryMenuListener;
+import com.yunmeike.category.CategoryMenuUtils;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
 import com.yunmeike.net.utils.RequestCommandEnum;
 import com.yunmeike.net.utils.RequestUtils;
 import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Config;
+import com.yunmeike.utils.Utils;
 
 public class NearFragmentPage extends Fragment implements OnClickListener{
 	private static String TAG="NearFragmentPage";
@@ -67,8 +82,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	private List<NearBean> nearBeanList;
 	private PtrClassicFrameLayout mPtrFrame;
 	private NearListAdapter mAdapter;
-	
-	private ViewGroup switch_near_btn,switch_hot_btn,switch_sort_btn;
+	private CategoryMenuAdapter menuAdapter;
+	private CategoryMenuLayout categoryMenuLayout;
 
 	private Activity activity;
 	private RequestQueue mQueue;
@@ -154,13 +169,6 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	        if(!TextUtils.isEmpty(city)){
 	        	currCity.setText(city);
 	        };
-	        
-			switch_near_btn = (ViewGroup) rootView.findViewById(R.id.switch_near_btn);
-			switch_hot_btn = (ViewGroup) rootView.findViewById(R.id.switch_hot_btn);
-			switch_sort_btn = (ViewGroup)rootView.findViewById(R.id.switch_sort_btn);
-			switch_near_btn.setOnClickListener(new SwitchOnClickListener());
-			switch_hot_btn.setOnClickListener(new SwitchOnClickListener());
-			switch_sort_btn.setOnClickListener(new SwitchOnClickListener());
 			
 			cityManger = CurrCityManager.getInstance();
 			cityManger.registerChangerCurrCityListener(currCityListener);
@@ -215,6 +223,17 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			    }
 			}, 100);
 			
+			categoryMenuLayout = (CategoryMenuLayout)rootView.findViewById(R.id.category_menu_layout);
+			List<CategoryMenuBean> menuList = CategoryMenuUtils.getTestMenuData();
+			menuAdapter = new CategoryMenuAdapter(activity, menuList);
+			categoryMenuLayout.setAdapter(menuAdapter);
+			categoryMenuLayout.setOnSelectedCategoryMenuListener(new OnSelectedCategoryMenuListener() {			
+				@Override
+				public void onSelectedCategoryMenuListener(CategoryMenuBean item, int positon, View view) {
+					Toast.makeText(activity, "positon = "+positon + ", item "+item, Toast.LENGTH_SHORT).show();
+					showCategoryPop(view, item);
+				}
+			});
 			
 			startGetData();
 		}
@@ -229,31 +248,119 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		return rootView;		
 	}	
 	
-	
-	private void handleSwitch(int id) {
-		final RadioButton nearRadio =(RadioButton) switch_near_btn.getChildAt(0);
-		final RadioButton hotRadio =(RadioButton) switch_hot_btn.getChildAt(0);
-		final RadioButton sortRadio =(RadioButton) switch_sort_btn.getChildAt(0);
-
+	PopupWindow categoryGroupPop;
+	boolean isShowPopup;
+	ListView categoryListView,categorySubListView;
+	/**
+	 * 显示类目筛选项窗口
+	 * showCategoryPop() 
+	 * @param anchorView
+	 * @param categoryGroup  
+	 * @return void
+	 * @author liujunbin
+	 */
+	@SuppressLint("NewApi")
+	public void showCategoryPop(final View anchorView,final CategoryMenuBean menuItem){
+		View categoryLayout = activity.getLayoutInflater().inflate(R.layout.category_window_layout, null);
+		categoryListView = (ListView) categoryLayout.findViewById(R.id.category_list);
+//		android.view.ViewGroup.LayoutParams layoutParams = categoryListView.getLayoutParams();
+//		if(categoryGroup!=null && categoryGroup.getCategoryLevelMax()>0){
+//			layoutParams.width = Utils.getDisplayMetrics(this)[0]/2-15;
+//		}else{
+//			layoutParams.width = LayoutParams.MATCH_PARENT;
+//		}
+		final CategoryGroup categoryGroup = menuItem.getCategoryGroup();
+		final CategoryListAdapter categoryListAdapter = new CategoryListAdapter(activity, categoryGroup);
+		categoryListView.setAdapter(categoryListAdapter);
 		
-		switch (id) {
-		case R.id.switch_near_btn:
-			nearRadio.setChecked(true);
-			hotRadio.setChecked(false);
-			sortRadio.setChecked(false);
-			break;
-		case R.id.switch_hot_btn:
-			nearRadio.setChecked(false);
-			hotRadio.setChecked(true);
-			sortRadio.setChecked(false);
-			break;
-		case R.id.switch_sort_btn:
-			nearRadio.setChecked(false);
-			hotRadio.setChecked(false);
-			sortRadio.setChecked(true);
-			break;
-		default:
-			break;
+		categorySubListView  = (ListView) categoryLayout.findViewById(R.id.category_sublist);
+		
+		if(categoryGroup.getTmpCategory() != null && categoryGroup.getTmpCategory().subList!=null && categoryGroup.getTmpCategory().subList.size()>0){
+					
+			List<CategoryBean> subList = categoryGroup.getTmpCategory().subList;
+			categorySubListView.setAdapter(new CategorySubListAdapter(activity,categoryGroup,subList));
+			categorySubListView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					CategorySubListAdapter adapter = (CategorySubListAdapter) parent.getAdapter();
+					CategoryBean subItem = (CategoryBean) adapter.getItem(position);
+					categoryGroup.setTmpSubCategory(subItem);	
+					dismiss();
+					menuItem.title = subItem.name;
+					menuAdapter.notifyDataSetChanged();
+				}
+			});
+		}else{
+			categorySubListView.setVisibility(View.GONE);
+		}
+		
+		categoryListView.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				CategoryListAdapter adapter = (CategoryListAdapter) parent.getAdapter();
+				CategoryBean item = (CategoryBean) adapter.getItem(position);
+				
+				List<CategoryBean> subList = item.subList;
+				if(subList!=null && subList.size()>0){
+					categoryGroup.setTmpCategory(item);
+					categoryListAdapter.notifyDataSetChanged();
+					categorySubListView.setAdapter(new CategorySubListAdapter(activity,categoryGroup,subList));
+					categorySubListView.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view,
+								int position, long id) {
+							CategorySubListAdapter adapter = (CategorySubListAdapter) parent.getAdapter();
+							CategoryBean subItem = (CategoryBean) adapter.getItem(position);
+							categoryGroup.setTmpSubCategory(subItem);	
+							dismiss();
+							menuItem.title = subItem.name;
+							menuAdapter.notifyDataSetChanged();
+						}
+					});
+				}else{
+					categoryGroup.setTmpCategory(item);
+					categoryGroup.setTmpSubCategory(item);
+					dismiss();
+					menuItem.title = item.name;
+					menuAdapter.notifyDataSetChanged();
+				}
+				
+			}
+		});	
+		
+		
+		ColorDrawable drawable = new ColorDrawable(activity.getResources().getColor(R.color.pop_bg_color));
+		
+		categoryGroupPop = new PopupWindow(activity);
+		categoryGroupPop.setWidth(LayoutParams.MATCH_PARENT);
+		categoryGroupPop.setHeight(Utils.getDisplayMetrics(activity)[1]*2/3);
+		categoryGroupPop.setBackgroundDrawable(drawable);
+
+		categoryGroupPop.setContentView(categoryLayout);
+		categoryGroupPop.setAnimationStyle(R.style.MorePopAnimation);
+		categoryGroupPop.setFocusable(true);
+		categoryGroupPop.setOutsideTouchable(true);
+		
+		categoryGroupPop.showAsDropDown(anchorView);
+
+		isShowPopup = true;
+		
+		categoryGroupPop.setOnDismissListener(new PopupWindow.OnDismissListener() {
+			@Override
+			public void onDismiss() {
+				//To do
+				isShowPopup = false;
+				
+			}
+		});
+		
+	}
+	
+	public void dismiss(){
+		if(categoryGroupPop!=null && categoryGroupPop.isShowing()){
+			categoryGroupPop.dismiss();
 		}
 	}
 	
@@ -315,29 +422,6 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			
 		},params);
 
-	}
-	
-	
-	class SwitchOnClickListener implements OnClickListener{
-
-		@Override
-		public void onClick(View view) {
-			switch (view.getId()) {
-			case R.id.switch_near_btn:
-				handleSwitch(R.id.switch_near_btn);
-				break;
-			case R.id.switch_hot_btn:
-				handleSwitch(R.id.switch_hot_btn);
-				break;
-			case R.id.switch_sort_btn:
-				handleSwitch(R.id.switch_sort_btn);
-				break;
-			default:
-				break;
-			}
-			
-		}
-		
 	}
 	
 	class NearListOnItemClickListener implements OnItemClickListener{

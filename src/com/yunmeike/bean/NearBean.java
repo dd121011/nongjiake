@@ -1,6 +1,7 @@
 package com.yunmeike.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class NearBean implements Serializable {
 //	 "id": "57",
@@ -20,6 +21,6 @@ public class NearBean implements Serializable {
 	public String city;
 	public String view;
 	public String per_capita;
-	public String tag;
+	public List<String> tag;
 	
 }

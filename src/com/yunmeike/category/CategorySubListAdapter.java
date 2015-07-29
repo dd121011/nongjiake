@@ -6,7 +6,6 @@ import com.njk.R;
 import com.yunmeike.view.ViewHolder;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class CategoryListAdapter extends BaseAdapter {
+public class CategorySubListAdapter extends BaseAdapter {
 	Activity context;
 	CategoryGroup categoryGroup;
 	List<CategoryBean> list;
 	private LayoutInflater inflater;
 
-	public CategoryListAdapter(Activity context,CategoryGroup categoryGroup) {
+	public CategorySubListAdapter(Activity context,CategoryGroup categoryGroup, List<CategoryBean> list) {
 		this.context = context;
 		this.categoryGroup = categoryGroup;
-		this.list = categoryGroup.getCategoryListData();
+		this.list = list;
 		this.inflater = LayoutInflater.from(context);
 	}
 
@@ -50,7 +49,7 @@ public class CategoryListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if(convertView==null){
-			convertView = inflater.inflate(R.layout.category_list_item, null);  
+			convertView = inflater.inflate(R.layout.category_list_item, null);
 		}
 
 		CategoryBean item = list.get(position);
@@ -60,12 +59,6 @@ public class CategoryListAdapter extends BaseAdapter {
 		TextView hint_text = ViewHolder.get(convertView, R.id.hint_text);
 
 		title_text.setText(item.name);
-		
-		if(item.equals(categoryGroup.getTmpCategory())){
-			convertView.setBackgroundColor(Color.TRANSPARENT);
-		}else{
-			convertView.setBackgroundColor(Color.WHITE);
-		}
 		
 		return convertView;
 	}
