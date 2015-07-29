@@ -2,20 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <ListView
-        android:id="@+id/category_test_list"
+    <com.yunmeike.category.CategoryMenuLayout
+        android:id="@+id/custom_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:layout_weight="1">
-    </ListView>
-    
-    <ListView
-        android:id="@+id/category_test_sublist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" 
-        android:layout_weight="1">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+    </com.yunmeike.category.CategoryMenuLayout>
+
+	<include layout="@layout/category_window_layout"/>
 
 </LinearLayout>
