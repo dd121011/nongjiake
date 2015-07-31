@@ -13,6 +13,25 @@ import com.yunmeike.pinnedheaderlistView.City;
 
 
 public class Config {
+	
+	/**
+	 * 设置更新城区列表的时间
+	 * @param context
+	 * @param value
+	 */
+	public static void setUpdateProvinceTime(Context context, String value){
+		setPreferences(context, Global.update_province_time, value);
+	}
+	
+	/**
+	 * 获取更新城区列表的时间
+	 * @param context
+	 * @param value
+	 */
+	public static String getUpdateProvinceTime(Context context){
+		return getStringPreferences(context,Global.update_province_time);
+	}
+	
 	/**
 	 * 设置定位城市
 	 * @param context

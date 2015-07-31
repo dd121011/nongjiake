@@ -29,4 +29,19 @@ public class CategoryMenuUtils {
 		}
 		return list;
 	}
+	
+	public static List<CategoryMenuBean> getMenuData(String[] strArr){
+		List<CategoryMenuBean> list = new ArrayList<CategoryMenuBean>();
+		for(int  i = 0;i<strArr.length;i++){
+			CategoryMenuBean item = new CategoryMenuBean();
+			item.setTitle(strArr[i]);
+			item.setSelected(false);
+			item.setIndex(i);
+			if(i==0){
+				item.setSelected(true);
+			}			
+			list.add(item);
+		}
+		return list;
+	}
 }

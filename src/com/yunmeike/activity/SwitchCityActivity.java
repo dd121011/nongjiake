@@ -64,7 +64,6 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 
 	private CurrCityManager cityManger;
 
-	private final static int GET_CITY_DATA_SUCCES = 1;
 	private final static int UPDATE_CITY_LIST = 2;
 
 	private static final int COPY_DB_SUCCESS = 10;
@@ -88,9 +87,6 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case GET_CITY_DATA_SUCCES:
-
-				break;
 			case QUERY_CITY_FINISH:
 
 				if (mAdapter == null) {
@@ -346,49 +342,6 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 		default:
 			break;
 		}
-
-	}
-
-	public void startGetCityData() {
-		Map<String, String> params = new HashMap<String, String>();
-
-		RequestUtils.startStringRequest(Method.GET, mQueue, RequestCommandEnum.APPINFOS_AREAS, new ResponseHandlerInterface() {
-
-			@Override
-			public void handlerSuccess(String response) {
-				// TODO Auto-generated method stub
-				Log.d(TAG, response);
-				try {
-					if (!TextUtils.isEmpty(response)) {
-						JSONObject obj = new JSONObject(response);
-						if (obj.has("code") && obj.getString("code").equals("0")) {
-							JSONObject dataObj = obj.getJSONObject("data");
-
-							String jsonArray = dataObj.getString("province");
-							Gson gson = new Gson();
-							ArrayList<ProvinceBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<ProvinceBean>>() {
-							}.getType());
-							Bundle data = new Bundle();
-							data.putSerializable("data", dataList);
-							Message msg = null;
-							msg = handler.obtainMessage(GET_CITY_DATA_SUCCES);
-							msg.setData(data);
-							msg.sendToTarget();
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-			}
-
-			@Override
-			public void handlerError(String error) {
-				// TODO Auto-generated method stub
-				Log.e(TAG, error);
-			}
-
-		}, params);
 
 	}
 }

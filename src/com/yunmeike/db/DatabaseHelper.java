@@ -11,6 +11,8 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import com.yunmeike.bean.CityBean;
+import com.yunmeike.bean.ProvinceBean;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 {
@@ -30,6 +32,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		try
 		{
 			TableUtils.createTable(connectionSource, User.class);
+			TableUtils.createTable(connectionSource, ProvinceBean.class);
+			TableUtils.createTable(connectionSource, CityBean.class);
 		} catch (SQLException e)
 		{
 			e.printStackTrace();
@@ -43,6 +47,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper
 		try
 		{
 			TableUtils.dropTable(connectionSource, User.class, true);
+			TableUtils.dropTable(connectionSource, ProvinceBean.class, true);
+			TableUtils.dropTable(connectionSource, CityBean.class, true);
 			onCreate(database, connectionSource);
 		} catch (SQLException e)
 		{

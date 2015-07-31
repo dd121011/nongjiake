@@ -8,9 +8,10 @@ public class Global {
 	public final static int LIST_MENU = 2;
 	
 
-	public final static String location_city = "location_city"; //保持在本地的当前城市
-	public final static String curr_city = "curr_city"; //保持在本地的当前城市
-	public final static String hide_guide = "hide_guide"; //显示引导页key
+	public final static String location_city = "location_city"; //保存在本地的当前城市
+	public final static String curr_city = "curr_city"; //保存在本地的当前城市
+	public final static String hide_guide = "hide_guide"; //是否显示引导页key
+	public final static String update_province_time = "update_province_time"; //更新地区列表数据的时间
 	
 	
 	public static String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",

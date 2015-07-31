@@ -5,7 +5,10 @@ import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
 import in.srain.cube.views.ptr.PtrHandler;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,17 +43,16 @@ import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.njk.R;
-import com.yunmeike.MApplication;
 import com.yunmeike.activity.ShopDetailsActivity;
 import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.bean.NearBean;
+import com.yunmeike.bean.ProvinceBean;
 import com.yunmeike.category.CategoryBean;
 import com.yunmeike.category.CategoryGroup;
 import com.yunmeike.category.CategoryListAdapter;
@@ -60,6 +62,8 @@ import com.yunmeike.category.CategoryMenuLayout;
 import com.yunmeike.category.CategoryMenuLayout.OnSelectedCategoryMenuListener;
 import com.yunmeike.category.CategoryMenuUtils;
 import com.yunmeike.category.CategorySubListAdapter;
+import com.yunmeike.db.ProvinceDBUtils;
+import com.yunmeike.db.User;
 import com.yunmeike.db.UserDao;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
@@ -77,6 +81,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	public final static int MORE_DATE_LIST = 2;
 	public final static int UPATE_LIST_LAYOUT = 3;
 	public final static int GET_DATE_FAIL = 100;
+
+	private final static int GET_CITY_DATA_SUCCES = 4;
 	
 	private View rootView;
 	private ListView listView ;
@@ -89,9 +95,10 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 
 	private Activity activity;
 	private RequestQueue mQueue;
-	private LocationClient mLocationClient;
 	
 	private CurrCityManager cityManger;
+	
+	private List<CategoryMenuBean> menuList;
 	
 	private int offset = 0;
 	private int per_page = 5;
@@ -101,6 +108,9 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case GET_CITY_DATA_SUCCES:
+
+				break;
 			case UPDATE_DATA_LIST:
 				List<NearBean> dataList = (List<NearBean>) msg.getData().getSerializable("data");
 				if(offset == 0){
@@ -147,29 +157,47 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	        listView = (ListView) rootView.findViewById(R.id.rotate_header_list_view);
 	        listView.setOnItemClickListener(new NearListOnItemClickListener());
 	        
-	        LocationClientUtils.getInstance().addListenter(new LocatonListener(){
-
-				@Override
-				public void onReceiveLocation(final BDLocation location) {
-					activity.runOnUiThread(new Runnable() {						
-						@Override
-						public void run() {
-							if(location!=null){
-								currCity.setText(location.getCity());
-							}
-						}
-					});
-				}
-	        	
-	        });
+//	        LocationClientUtils.getInstance().addListenter(new LocatonListener(){
+//
+//				@Override
+//				public void onReceiveLocation(final BDLocation location) {
+//					activity.runOnUiThread(new Runnable() {						
+//						@Override
+//						public void run() {
+//							if(location!=null){
+//								currCity.setText(location.getCity());
+//								setCurProvinceCategoryGroup(location.getCity());
+//							}
+//						}
+//					});
+//				}
+//	        	
+//	        });
 	        
 	        rootView.findViewById(R.id.switch_adress_btn).setOnClickListener(this);
 	        rootView.findViewById(R.id.map_btn).setOnClickListener(this);
+	        
+			categoryMenuLayout = (CategoryMenuLayout)rootView.findViewById(R.id.category_menu_layout);
+			String[] strArr = {"全城","距离","排序"};
+//			menuList = CategoryMenuUtils.getTestMenuData();
+			menuList = CategoryMenuUtils.getMenuData(strArr);
+			
+			
+			menuAdapter = new CategoryMenuAdapter(activity, menuList);
+			categoryMenuLayout.setAdapter(menuAdapter);
+			categoryMenuLayout.setOnSelectedCategoryMenuListener(new OnSelectedCategoryMenuListener() {			
+				@Override
+				public void onSelectedCategoryMenuListener(CategoryMenuBean item, int positon, View view) {
+					Toast.makeText(activity, "positon = "+positon + ", item "+item, Toast.LENGTH_SHORT).show();
+					showCategoryPop(view, item);
+				}
+			});
 	        
 	        currCity = (TextView) rootView.findViewById(R.id.curr_city_text);
 	        String city = Config.getCurrCity(activity);
 	        if(!TextUtils.isEmpty(city)){
 	        	currCity.setText(city);
+	        	setCurProvinceCategoryGroup(city);
 	        };
 			
 			cityManger = CurrCityManager.getInstance();
@@ -225,21 +253,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			    }
 			}, 100);
 			
-			categoryMenuLayout = (CategoryMenuLayout)rootView.findViewById(R.id.category_menu_layout);
-			List<CategoryMenuBean> menuList = CategoryMenuUtils.getTestMenuData();
-			menuAdapter = new CategoryMenuAdapter(activity, menuList);
-			categoryMenuLayout.setAdapter(menuAdapter);
-			categoryMenuLayout.setOnSelectedCategoryMenuListener(new OnSelectedCategoryMenuListener() {			
-				@Override
-				public void onSelectedCategoryMenuListener(CategoryMenuBean item, int positon, View view) {
-					Toast.makeText(activity, "positon = "+positon + ", item "+item, Toast.LENGTH_SHORT).show();
-					showCategoryPop(view, item);
-				}
-			});
-			
 			startGetData();
-			UserDao dao = new UserDao(activity);
-			dao.queryForAll();
+			
 		}
 		
 		// 缓存的rootView需要判断是否已经被加过parent，如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误。
@@ -251,6 +266,10 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		
 		return rootView;		
 	}	
+	
+	private void setCurProvinceCategoryGroup(String currCity){
+		ProvinceBean provinceBean = ProvinceDBUtils.getProvince(activity, currCity);
+	}
 	
 	PopupWindow categoryGroupPop;
 	boolean isShowPopup;
@@ -464,9 +483,12 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 				public void run() {
 					if(!TextUtils.isEmpty(city)){
 			        	currCity.setText(city);
+			        	setCurProvinceCategoryGroup(city);
 			        };
 				}
 			});			
 		}	
 	};
+	
+	
 }
