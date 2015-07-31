@@ -25,15 +25,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,21 +51,24 @@ import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.bean.NearBean;
-import com.yunmeike.category.CategoryMenuAdapter;
 import com.yunmeike.category.CategoryBean;
 import com.yunmeike.category.CategoryGroup;
 import com.yunmeike.category.CategoryListAdapter;
+import com.yunmeike.category.CategoryMenuAdapter;
 import com.yunmeike.category.CategoryMenuBean;
 import com.yunmeike.category.CategoryMenuLayout;
-import com.yunmeike.category.CategorySubListAdapter;
 import com.yunmeike.category.CategoryMenuLayout.OnSelectedCategoryMenuListener;
 import com.yunmeike.category.CategoryMenuUtils;
+import com.yunmeike.category.CategorySubListAdapter;
+import com.yunmeike.db.UserDao;
 import com.yunmeike.manager.CurrCityManager;
 import com.yunmeike.manager.CurrCityManager.OnChangerCurrCityListener;
 import com.yunmeike.net.utils.RequestCommandEnum;
 import com.yunmeike.net.utils.RequestUtils;
 import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Config;
+import com.yunmeike.utils.LocationClientUtils;
+import com.yunmeike.utils.LocationClientUtils.LocatonListener;
 import com.yunmeike.utils.Utils;
 
 public class NearFragmentPage extends Fragment implements OnClickListener{
@@ -145,27 +147,27 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	        listView = (ListView) rootView.findViewById(R.id.rotate_header_list_view);
 	        listView.setOnItemClickListener(new NearListOnItemClickListener());
 	        
-	        mLocationClient = ((MApplication)activity.getApplication()).mLocationClient;
-			mLocationClient.registerLocationListener(new BDLocationListener() {				
+	        LocationClientUtils.getInstance().addListenter(new LocatonListener(){
+
 				@Override
-				public void onReceiveLocation(final BDLocation arg0) {
-					// TODO Auto-generated method stub
+				public void onReceiveLocation(final BDLocation location) {
 					activity.runOnUiThread(new Runnable() {						
 						@Override
 						public void run() {
-							if(arg0!=null){
-								currCity.setText(arg0.getCity());
+							if(location!=null){
+								currCity.setText(location.getCity());
 							}
 						}
 					});
 				}
-			});
+	        	
+	        });
 	        
 	        rootView.findViewById(R.id.switch_adress_btn).setOnClickListener(this);
 	        rootView.findViewById(R.id.map_btn).setOnClickListener(this);
 	        
 	        currCity = (TextView) rootView.findViewById(R.id.curr_city_text);
-	        String city = Config.getLocationCity(activity);
+	        String city = Config.getCurrCity(activity);
 	        if(!TextUtils.isEmpty(city)){
 	        	currCity.setText(city);
 	        };
@@ -236,6 +238,8 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			});
 			
 			startGetData();
+			UserDao dao = new UserDao(activity);
+			dao.queryForAll();
 		}
 		
 		// 缓存的rootView需要判断是否已经被加过parent，如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误。
@@ -366,7 +370,6 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	
 	@Override
 	public void onStop() {
-		mLocationClient.stop();
 		super.onStop();
 	}
 

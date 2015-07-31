@@ -25,6 +25,7 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 
 import com.njk.R;
+import com.yunmeike.activity.AddNjyActivity;
 import com.yunmeike.photo.activity.AlbumActivity;
 import com.yunmeike.photo.activity.SendPhotoActivity;
 
@@ -147,7 +148,7 @@ private static String TAG="EncircleFragmentPage";
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.share_btn:
-			Intent intent = new Intent(activity, SendPhotoActivity.class);
+			Intent intent = new Intent(activity, AddNjyActivity.class);
 			startActivity(intent);
 			break;
 

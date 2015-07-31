@@ -3,6 +3,7 @@ package com.yunmeike.pinnedheaderlistView;
 import java.util.List;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.njk.R;
 import com.yunmeike.pinnedheaderlistView.PinnedHeaderListView.PinnedHeaderAdapter;
+import com.yunmeike.utils.Config;
 
 public class CityListAdapter extends BaseAdapter implements
 		PinnedHeaderAdapter, OnScrollListener {
@@ -75,6 +77,10 @@ public class CityListAdapter extends BaseAdapter implements
 				holder.group_title.setText("热门城市");
 			}else if(city.getSortKey().equals("定")){
 				holder.group_title.setText("定位城市");
+				String cityStr = Config.getLocationCity(mContext);
+				if(TextUtils.isEmpty(cityStr)){
+					city.setName("正在定位城市");
+				}
 			}
 		} else {
 			holder.group_title.setVisibility(View.GONE);

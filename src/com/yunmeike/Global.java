@@ -8,8 +8,8 @@ public class Global {
 	public final static int LIST_MENU = 2;
 	
 
-
 	public final static String location_city = "location_city"; //保持在本地的当前城市
+	public final static String curr_city = "curr_city"; //保持在本地的当前城市
 	public final static String hide_guide = "hide_guide"; //显示引导页key
 	
 	

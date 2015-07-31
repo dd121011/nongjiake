@@ -20,12 +20,10 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.yunmeike.photo.util.Res;
 import com.yunmeike.utils.Config;
+import com.yunmeike.utils.LocationClientUtils;
 
 public class MApplication extends Application {
-	public LocationClient mLocationClient;
-	public GeofenceClient mGeofenceClient;
-	public MyLocationListener mMyLocationListener;
-	public Vibrator mVibrator;
+
 	
 	public List<Activity> userLoginList;
 	
@@ -37,61 +35,13 @@ public class MApplication extends Application {
 		// 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
 		SDKInitializer.initialize(this);
 		
-		mLocationClient = new LocationClient(this.getApplicationContext());
-		mMyLocationListener = new MyLocationListener();
-		mLocationClient.registerLocationListener(mMyLocationListener);
-		mGeofenceClient = new GeofenceClient(getApplicationContext());
+		LocationClientUtils.getInstance().init(this);
 		
-
 		initImageLoader(getApplicationContext());
 		
 	}
 
-	/**
-	 * 实现实位回调监听
-	 */
-	public class MyLocationListener implements BDLocationListener {
 
-		@Override
-		public void onReceiveLocation(BDLocation location) {
-			//Receive Location 
-			if(location!=null){
-				Config.setLocationCity(getApplicationContext(),location.getCity());
-			}
-			
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("time : ");
-			sb.append(location.getTime());
-			sb.append("\nerror code : ");
-			sb.append(location.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(location.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(location.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(location.getRadius());
-			if (location.getLocType() == BDLocation.TypeGpsLocation){
-				sb.append("\nspeed : ");
-				sb.append(location.getSpeed());
-				sb.append("\nsatellite : ");
-				sb.append(location.getSatelliteNumber());
-				sb.append("\ndirection : ");
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-				sb.append(location.getDirection());
-			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-				//运营商信息
-				sb.append("\noperationers : ");
-				sb.append(location.getOperators());
-			}
-
-			Log.i("MApplication", sb.toString());
-		}
-
-
-	}
 	
 	
 	public void addLoginAcitivity(Activity activity){

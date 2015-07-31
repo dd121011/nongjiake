@@ -26,16 +26,16 @@ public class CurrCityManager {
     }
     
     
-    private static List<OnChangerCurrCityListener> changeCurrCityListeners = null;
+    private List<OnChangerCurrCityListener> changeCurrCityListeners = null;
     
-    public static void setCurrCity(Context context, String currCity){
-    	Config.setLocationCity(context,currCity);
+    public void setCurrCity(Context context, String currCity){
+    	Config.setCurrCity(context,currCity);
     	for(OnChangerCurrCityListener listenre : changeCurrCityListeners){
     		listenre.onChangeCurrCity(currCity);
     	}
     }
     
-    public static void registerChangerCurrCityListener(OnChangerCurrCityListener listener){
+    public void registerChangerCurrCityListener(OnChangerCurrCityListener listener){
     	changeCurrCityListeners.add(listener);
     }
     

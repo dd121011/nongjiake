@@ -19,9 +19,10 @@ public class CategoryMenuUtils {
 			List<CategoryBean> listData = CategoryBeanUtils.getTestDada();			
 			CategoryGroup categoryGroup = new CategoryGroup(listData);
 			CategoryBean categoryBean = listData.get(0);
+			categoryBean.name=strArr[i];
 			categoryGroup.setTmpCategory(categoryBean);
 			categoryGroup.setTmpSubCategory(categoryBean);
-			item.setTitle(categoryBean.name);
+			
 			item.setCategoryGroup(categoryGroup);
 			
 			list.add(item);

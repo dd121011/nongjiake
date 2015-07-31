@@ -13,27 +13,43 @@ import com.yunmeike.pinnedheaderlistView.City;
 
 
 public class Config {
+	/**
+	 * 设置定位城市
+	 * @param context
+	 * @param value
+	 */
+	public static void setLocationCity(Context context, String value){
+		setPreferences(context, Global.location_city, value);
+	}
+	/**
+	 * 获取定位城市
+	 * @param context
+	 * @return
+	 */
+	public static String getLocationCity(Context context){
+		return getStringPreferences(context,Global.location_city);
+	}
 	
 	/**
-	 * 设置当前定位城市
+	 * 设置当前城市
 	 * setLocationCity() 
 	 * @param context
 	 * @param value  
 	 * @return void
 	 * @author liujunbin
 	 */
-	public static void setLocationCity(Context context, String value){
-		setPreferences(context, Global.location_city, value);
+	public static void setCurrCity(Context context, String value){
+		setPreferences(context, Global.curr_city, value);
 	}
 	/**
-	 * 获取本地保持当前定位城市
+	 * 获取本地保存当前城市
 	 * getLocationCity() 
 	 * @param context  
 	 * @return void
 	 * @author liujunbin
 	 */
-	public static String getLocationCity(Context context){
-		return getStringPreferences(context,Global.location_city);
+	public static String getCurrCity(Context context){
+		return getStringPreferences(context,Global.curr_city);
 	}
 	
 	/**

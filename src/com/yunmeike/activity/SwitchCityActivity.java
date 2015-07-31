@@ -52,6 +52,8 @@ import com.yunmeike.pinnedheaderlistView.DBHelper;
 import com.yunmeike.pinnedheaderlistView.MySectionIndexer;
 import com.yunmeike.pinnedheaderlistView.PinnedHeaderListView;
 import com.yunmeike.utils.Config;
+import com.yunmeike.utils.LocationClientUtils;
+import com.yunmeike.utils.LocationClientUtils.LocatonListener;
 import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
 
@@ -61,10 +63,6 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 	private Activity context;
 
 	private CurrCityManager cityManger;
-
-	private LocationClient mLocationClient;
-	private LocationMode tempMode = LocationMode.Hight_Accuracy;
-	private String tempcoor = "gcj02";
 
 	private final static int GET_CITY_DATA_SUCCES = 1;
 	private final static int UPDATE_CITY_LIST = 2;
@@ -159,7 +157,9 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 		findView();
 		
 		cityManger = CurrCityManager.getInstance();
-		initLocationCity();
+		
+		LocationClientUtils.getInstance().addListenter(locationListener);
+        LocationClientUtils.getInstance().start();
 	}
 
 	private void copyDBFile() {
@@ -309,51 +309,24 @@ public class SwitchCityActivity extends BaseActivity implements OnClickListener 
 		});
 	}
 
-	private void initLocationCity() {
-		String city = Config.getLocationCity(context);
-		if (TextUtils.isEmpty(city)) {
-			mLocationClient = ((MApplication) getApplication()).mLocationClient;
-			InitLocation();
-			mLocationClient.registerLocationListener(bdLocationListener);
-			mLocationClient.start();
-		}else{
-			handler.sendEmptyMessage(UPDATE_CITY_LIST);
-		};
-	}
-
-	private void InitLocation() {
-		LocationClientOption option = new LocationClientOption();
-		option.setLocationMode(tempMode);// 设置定位模式
-		option.setCoorType(tempcoor);// 返回的定位结果是百度经纬度，默认值gcj02
-		int span = 1000;
-		option.setScanSpan(span);// 设置发起定位请求的间隔时间为5000ms
-		option.setIsNeedAddress(true);
-		mLocationClient.setLocOption(option);
-	}
-
-
-
-
-
-
 	@Override
-	protected void onStop() {
+	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		if (mLocationClient != null) {
-			mLocationClient.stop();
-		}
-		super.onStop();
+		LocationClientUtils.getInstance().removeListener(locationListener);
+		super.onDestroy();
 	}
-
-	private BDLocationListener bdLocationListener = new BDLocationListener() {
+	
+	private LocatonListener locationListener = new LocatonListener() {
 
 		@Override
-		public void onReceiveLocation(final BDLocation arg0) {
+		public void onReceiveLocation(final BDLocation location) {
+			
 			runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					if (arg0 != null) {
-						cityManger.setCurrCity(context, arg0.getCity());
+					if (location != null) {
+//						cityManger.setCurrCity(context, arg0.getCity());
+						Config.setLocationCity(context, location.getCity());
 						handler.sendEmptyMessage(UPDATE_CITY_LIST);
 					}
 				}
