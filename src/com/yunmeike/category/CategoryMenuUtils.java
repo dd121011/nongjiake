@@ -40,6 +40,18 @@ public class CategoryMenuUtils {
 			if(i==0){
 				item.setSelected(true);
 			}			
+			List<CategoryBean> listData = new ArrayList<CategoryBean>();
+			CategoryBean categoryBean = new CategoryBean();
+			categoryBean.name = strArr[i];
+			categoryBean.id = 9999+"";
+			listData.add(categoryBean);
+			
+			CategoryGroup categoryGroup = new CategoryGroup(listData);
+			categoryGroup.setTmpCategory(categoryBean);
+			categoryGroup.setTmpSubCategory(categoryBean);
+			
+			item.setCategoryGroup(categoryGroup);
+			
 			list.add(item);
 		}
 		return list;

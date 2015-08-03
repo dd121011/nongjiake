@@ -15,6 +15,78 @@ import com.yunmeike.pinnedheaderlistView.City;
 public class Config {
 	
 	/**
+	 * 保存用户当前纬度
+	 * @param context
+	 * @param value
+	 */
+	public static void setCurLng(Context context, String value){
+		setPreferences(context, Global.cur_lng, value);
+	}
+	
+	/**
+	 * 获取用户当前纬度
+	 * @param context
+	 * @param value
+	 */
+	public static String getCurLng(Context context){
+		return getStringPreferences(context,Global.cur_lng);
+	}
+	
+	/**
+	 * 保存用户当前经度
+	 * @param context
+	 * @param value
+	 */
+	public static void setCurLat(Context context, String value){
+		setPreferences(context, Global.cur_lat, value);
+	}
+	
+	/**
+	 * 获取用户当前经度
+	 * @param context
+	 * @param value
+	 */
+	public static String getCurLat(Context context){
+		return getStringPreferences(context,Global.cur_lat);
+	}
+	
+	/**
+	 * 保存用户token
+	 * @param context
+	 * @param value
+	 */
+	public static void setUserToken(Context context, String value){
+		setPreferences(context, Global.token, value);
+	}
+	
+	/**
+	 * 获取用户token
+	 * @param context
+	 * @param value
+	 */
+	public static String getUserToken(Context context){
+		return getStringPreferences(context,Global.token);
+	}
+	
+	/**
+	 * 保存用户id
+	 * @param context
+	 * @param value
+	 */
+	public static void setUserId(Context context, String value){
+		setPreferences(context, Global.user_id, value);
+	}
+	
+	/**
+	 * 获取用户id
+	 * @param context
+	 * @param value
+	 */
+	public static String getUserId(Context context){
+		return getStringPreferences(context,Global.user_id);
+	}
+	
+	/**
 	 * 设置更新城区列表的时间
 	 * @param context
 	 * @param value
@@ -69,6 +141,28 @@ public class Config {
 	 */
 	public static String getCurrCity(Context context){
 		return getStringPreferences(context,Global.curr_city);
+	}
+	
+	/**
+	 * 设置当前城市id
+	 * setLocationCity() 
+	 * @param context
+	 * @param value  
+	 * @return void
+	 * @author liujunbin
+	 */
+	public static void setCurrCityId(Context context, String value){
+		setPreferences(context, Global.curr_city_id, value);
+	}
+	/**
+	 * 获取本地保存当前城市id
+	 * getLocationCity() 
+	 * @param context  
+	 * @return void
+	 * @author liujunbin
+	 */
+	public static String getCurrCityId(Context context){
+		return getStringPreferences(context,Global.curr_city_id);
 	}
 	
 	/**

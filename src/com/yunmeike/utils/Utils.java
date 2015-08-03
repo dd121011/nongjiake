@@ -1,5 +1,9 @@
 package com.yunmeike.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.util.DisplayMetrics;
@@ -13,10 +17,7 @@ import com.njk.R;
 public class Utils {
 
 	public enum TOP_BTN_MODE {
-		SHOWBACK,SHOWLEFTTEXT, SHOUSHARE, SHOWRIGHTTEXT,SHOWBOTH,SHOWTEXT,NOSHOWTEXT;
-
-
-		
+		SHOWBACK,SHOWLEFTTEXT, SHOUSHARE, SHOWRIGHTTEXT,SHOWBOTH,SHOWTEXT,NOSHOWTEXT;		
 	}
 	
 	
@@ -85,5 +86,5 @@ public class Utils {
 		activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
 		return new int[] { dm.widthPixels, dm.heightPixels };
 	}
-	
+
 }

@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
@@ -32,11 +33,11 @@ import com.yunmeike.utils.Utils;
 import com.yunmeike.utils.Utils.TOP_BTN_MODE;
 
 public class RegisterActivity extends BaseActivity implements OnClickListener {
-	private static final String TAG = "TAG";
+	private static final String TAG = "RegisterActivity";
 	private static final int GET_VERIFY_CODE = 1;
 
 	private TextView getVerifyCodeBtn;
-	private EditText phone_text;
+	private EditText phone_text,verify_code_text;
 
 	private int timeMax = 6;
 	private int offsetTime = timeMax;
@@ -79,6 +80,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 		findViewById(R.id.next_btn).setOnClickListener(this);
 
 		phone_text = (EditText) findViewById(R.id.phone_text);
+		verify_code_text = (EditText) findViewById(R.id.verify_code_text);
 
 		getVerifyCodeBtn = (TextView) findViewById(R.id.get_verify_code);
 		getVerifyCodeBtn.setOnClickListener(this);
@@ -94,16 +96,23 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 			this.finish();
 			break;
 		case R.id.next_btn:
-			intent = new Intent(context, SetPasswordActivity.class);
-			startActivity(intent);
-			MApplication app = (MApplication) getApplication();
-			app.addLoginAcitivity(this);
+			String verify_code = verify_code_text.getText().toString();
+			String phone = phone_text.getText().toString();
+			if(!TextUtils.isEmpty(verify_code) && !TextUtils.isEmpty(phone)){
+				intent = new Intent(context, SetPasswordActivity.class);
+				intent.putExtra("mobile", phone);
+				intent.putExtra("verify_code", verify_code);
+				startActivity(intent);
+				MApplication app = (MApplication) getApplication();
+				app.addLoginAcitivity(this);
+			}			
 			break;
 		case R.id.get_verify_code:
 			String str = phone_text.getText().toString();
 			if(!TextUtils.isEmpty(str)){
 				if(offsetTime == timeMax ){
-					handler.sendEmptyMessageDelayed(GET_VERIFY_CODE, 1000);
+//					handler.sendEmptyMessageDelayed(GET_VERIFY_CODE, 1000);
+					handler.sendEmptyMessage(GET_VERIFY_CODE);
 					getVerifyCode(str);
 				}
 			}
@@ -120,7 +129,7 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 		Map<String, String> params = new HashMap<String, String>();
 		params.put("mobile", num);
 
-		RequestUtils.startStringRequest(Method.GET, mQueue, RequestCommandEnum.SEND_CODE_DO, new ResponseHandlerInterface() {
+		RequestUtils.startStringRequest(Method.POST, mQueue, RequestCommandEnum.SEND_CODE_DO, new ResponseHandlerInterface() {
 
 			@Override
 			public void handlerSuccess(String response) {
@@ -132,6 +141,14 @@ public class RegisterActivity extends BaseActivity implements OnClickListener {
 						String codeText = obj.getString("code");
 						if("0".equals(codeText)){
 							
+						}else if("1003".equals(codeText)){
+							final String msgText = obj.getString("message");
+							runOnUiThread(new Runnable() {								
+								@Override
+								public void run() {
+									Toast.makeText(context, msgText+"", Toast.LENGTH_SHORT).show();
+								}
+							});
 						}
 					}
 				} catch (Exception e) {

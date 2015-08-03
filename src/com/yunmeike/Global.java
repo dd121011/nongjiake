@@ -10,8 +10,13 @@ public class Global {
 
 	public final static String location_city = "location_city"; //保存在本地的当前城市
 	public final static String curr_city = "curr_city"; //保存在本地的当前城市
+	public final static String curr_city_id = "curr_city_id"; //保存在本地的当前城市id
 	public final static String hide_guide = "hide_guide"; //是否显示引导页key
 	public final static String update_province_time = "update_province_time"; //更新地区列表数据的时间
+	public final static String user_id = "user_id"; //用户id
+	public final static String token = "token"; //用户token
+	public final static String cur_lat = "cur_lat"; //用户当前经度
+	public final static String cur_lng = "cur_lng"; //用户当前经度
 	
 	
 	public static String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",

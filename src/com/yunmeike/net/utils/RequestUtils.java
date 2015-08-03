@@ -28,7 +28,7 @@ public class RequestUtils {
 	
 	public static void startStringRequest(int method, RequestQueue mQueue, RequestCommandEnum urlEnum, final ResponseHandlerInterface responseHandlerInterface,final Map<String, String> params) {
 		String url = getUrl(method, urlEnum, params);
-		
+		Log.d(TAG, "url = "+url);  
 		StringRequest stringRequest = new StringRequest(method,url,  
                 new Response.Listener<String>() {  
                     @Override  

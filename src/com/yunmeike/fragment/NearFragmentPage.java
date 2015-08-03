@@ -51,9 +51,11 @@ import com.yunmeike.activity.ShopDetailsActivity;
 import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
 import com.yunmeike.adapter.NearListAdapter;
+import com.yunmeike.bean.GetscenicBean;
 import com.yunmeike.bean.NearBean;
 import com.yunmeike.bean.ProvinceBean;
 import com.yunmeike.category.CategoryBean;
+import com.yunmeike.category.CategoryBeanUtils;
 import com.yunmeike.category.CategoryGroup;
 import com.yunmeike.category.CategoryListAdapter;
 import com.yunmeike.category.CategoryMenuAdapter;
@@ -99,9 +101,10 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	private CurrCityManager cityManger;
 	
 	private List<CategoryMenuBean> menuList;
+	private CategoryMenuBean menuBean0,menuBean1,menuBean2;
 	
 	private int offset = 0;
-	private int per_page = 5;
+	private int per_page = 10;
 	
 	private Handler handler = new Handler(){
 
@@ -181,8 +184,10 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			String[] strArr = {"全城","距离","排序"};
 //			menuList = CategoryMenuUtils.getTestMenuData();
 			menuList = CategoryMenuUtils.getMenuData(strArr);
-			
-			
+			menuBean0 = menuList.get(0);
+			menuBean1 = menuList.get(1);
+			menuBean2 = menuList.get(2);
+						
 			menuAdapter = new CategoryMenuAdapter(activity, menuList);
 			categoryMenuLayout.setAdapter(menuAdapter);
 			categoryMenuLayout.setOnSelectedCategoryMenuListener(new OnSelectedCategoryMenuListener() {			
@@ -255,6 +260,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			
 			startGetData();
 			
+			getGetscenic();
 		}
 		
 		// 缓存的rootView需要判断是否已经被加过parent，如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误。
@@ -401,7 +407,24 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		Map<String, String> params = new HashMap<String, String>(); 
 		params.put("offset", offset+"");
 		params.put("per_page", per_page+"");
-		
+//		params.put("Token", Config.getUserToken(activity)+"");
+//		params.put("keyword", "");
+//		params.put("lat", Config.getCurLat(activity));
+//		params.put("lng", Config.getCurLng(activity));
+//		params.put("city_id", Config.getCurrCityId(activity));
+//		params.put("scenic_id", "scenic_id");
+//		params.put("orderby", "orderby");
+//		Token	Token值
+//		offset	偏移量(0,10,20)默认0
+//		per_page	每页显示数(10)
+//		source	1web 2 android 3 ios
+//		keyword	搜索农家客关键字
+//		lat	经度
+//		lng	维度
+//		city_id	城市id
+//		scenic_id	景区id
+//		orderby	排序(1:距离最近2:人气最高3:点评最多4:人均最低5:人均最高)
+
 		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
 			@Override
@@ -455,6 +478,50 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			activity.startActivity(intent);
 		}
 		
+	}
+	
+	/**
+	 * 获取景区列表数据
+	 */
+	public void getGetscenic(){
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("Token", Config.getUserToken(activity)+"");
+		params.put("city_id", Config.getCurrCityId(activity));
+
+		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_GETSCENIC,new ResponseHandlerInterface(){
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				 Log.d(TAG, response); 
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+							 ArrayList<GetscenicBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<GetscenicBean>>(){}.getType());
+							 CategoryGroup group = menuBean0.getCategoryGroup();
+							 if(group!=null){
+								 List<CategoryBean> categoryListData = group.getCategoryListData();
+								 categoryListData.addAll(CategoryBeanUtils.getscenicToCategory(dataList));
+							 }
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);  
+			}
+			
+		},params);
+
 	}
 
 
