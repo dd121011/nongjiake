@@ -34,7 +34,7 @@ public class DialogUtil {
 		progressDialog.setMessage(message);
 		progressDialog.setIndeterminate(true);
 		progressDialog.setCancelable(true);
-		progressDialog.setIndeterminateDrawable(context.getResources().getDrawable( R.anim.loading_anim));
+		progressDialog.setIndeterminateDrawable(context.getResources().getDrawable( R.anim.loading_anim2));
 		
 //		progressDialog = CustomProgressDialog.createDialog(context);  
 		progressDialog.setMessage(message); 

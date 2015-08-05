@@ -19,7 +19,7 @@
             android:layout_width="50dip"
             android:layout_height="50dip"
             android:scaleType="centerCrop"
-            android:src="@drawable/face_test1"
+            android:src="@drawable/img_default_icon"
             app:sriv_border_color="@color/text_color0"
             app:sriv_border_width="0dip"
             app:sriv_left_bottom_corner_radius="48dip"

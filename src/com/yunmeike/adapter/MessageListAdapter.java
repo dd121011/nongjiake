@@ -30,9 +30,9 @@ public class MessageListAdapter extends BaseAdapter {
 		this.mListItems = mListItems;
 		
 		options = new DisplayImageOptions.Builder()
-		.showImageOnLoading(R.drawable.face_test1)
-		.showImageForEmptyUri(R.drawable.face_test1)
-		.showImageOnFail(R.drawable.face_test1)
+		.showImageOnLoading(R.drawable.img_default_icon)
+		.showImageForEmptyUri(R.drawable.img_default_icon)
+		.showImageOnFail(R.drawable.img_default_icon)
 		.cacheInMemory(true)
 		.cacheOnDisk(true)
 		.considerExifParams(true)
@@ -75,7 +75,7 @@ public class MessageListAdapter extends BaseAdapter {
 
 		
 //		ImageView faceImg = ViewHolder.get(arg1, R.id.face_img);
-		ImageLoader.getInstance().displayImage("drawable://" + R.drawable.face_test1, faceImg, options);	
+		ImageLoader.getInstance().displayImage("drawable://" + R.drawable.img_default_icon, faceImg, options);	
 		ImageLoader.getInstance().displayImage("http://img0.bdstatic.com/img/image/4a75a05f8041bf84df4a4933667824811426747915.jpg", faceImg, options);
 		
 		return arg1;

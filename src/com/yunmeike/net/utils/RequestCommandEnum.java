@@ -11,7 +11,9 @@ public enum RequestCommandEnum {
 	FINDFAMILY_LISTLBS("/api/family/findfamilyListlbs"),
 	FAMILY_FAV_DO("/api/family/fav_do"),
 	FAMILY_CANCEL_FAV("/api/family/cancel_fav"),
-	FAMILY_REVIEW_DO("/api/family/review_do");
+	FAMILY_REVIEW_DO("/api/family/review_do"),
+	FAMILY_DETAIL("/api/family/detail");
+	
 
 	public String command;
 	RequestCommandEnum(String name) {

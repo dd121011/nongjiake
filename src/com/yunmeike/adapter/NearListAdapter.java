@@ -34,9 +34,9 @@ public class NearListAdapter extends BaseAdapter {
 		this.nearBeanList = nearBeanList;
 		
 		options = new DisplayImageOptions.Builder()
-		.showImageOnLoading(R.drawable.face_test1)
-		.showImageForEmptyUri(R.drawable.face_test1)
-		.showImageOnFail(R.drawable.face_test1)
+		.showImageOnLoading(R.drawable.img_default_icon)
+		.showImageForEmptyUri(R.drawable.img_default_icon)
+		.showImageOnFail(R.drawable.img_default_icon)
 		.cacheInMemory(true)
 		.cacheOnDisk(true)
 		.considerExifParams(true)

@@ -154,7 +154,7 @@ public class MainTabActivity extends BaseActivity{
 		Map<String, String> params = new HashMap<String, String>();
 //		params.put("Token", "");
 //		params.put("version", "");
-		RequestUtils.startStringRequest(Method.GET, mQueue, RequestCommandEnum.APPINFOS_AREAS, new ResponseHandlerInterface() {
+		RequestUtils.startStringRequest(Method.POST, mQueue, RequestCommandEnum.APPINFOS_AREAS, new ResponseHandlerInterface() {
 
 			@Override
 			public void handlerSuccess(String response) {

@@ -36,7 +36,7 @@
             android:layout_width="60dip"
             android:layout_height="60dip"
             android:layout_centerInParent="true"
-            android:src="@drawable/face_test1"
+            android:src="@drawable/img_default_icon"
             app:sriv_border_color="@color/text_color0"
             app:sriv_border_width="2dip"
             app:sriv_left_bottom_corner_radius="48dip"

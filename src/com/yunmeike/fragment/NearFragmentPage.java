@@ -50,6 +50,7 @@ import com.njk.R;
 import com.yunmeike.activity.ShopDetailsActivity;
 import com.yunmeike.activity.ShopMapListActivity;
 import com.yunmeike.activity.SwitchCityActivity;
+import com.yunmeike.activity.DetailWebViewActivity;
 import com.yunmeike.adapter.NearListAdapter;
 import com.yunmeike.bean.GetscenicBean;
 import com.yunmeike.bean.NearBean;
@@ -73,6 +74,7 @@ import com.yunmeike.net.utils.RequestCommandEnum;
 import com.yunmeike.net.utils.RequestUtils;
 import com.yunmeike.net.utils.RequestUtils.ResponseHandlerInterface;
 import com.yunmeike.utils.Config;
+import com.yunmeike.utils.DialogUtil;
 import com.yunmeike.utils.LocationClientUtils;
 import com.yunmeike.utils.LocationClientUtils.LocatonListener;
 import com.yunmeike.utils.Utils;
@@ -160,33 +162,34 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 	        listView = (ListView) rootView.findViewById(R.id.rotate_header_list_view);
 	        listView.setOnItemClickListener(new NearListOnItemClickListener());
 	        
-//	        LocationClientUtils.getInstance().addListenter(new LocatonListener(){
-//
-//				@Override
-//				public void onReceiveLocation(final BDLocation location) {
-//					activity.runOnUiThread(new Runnable() {						
-//						@Override
-//						public void run() {
-//							if(location!=null){
-//								currCity.setText(location.getCity());
-//								setCurProvinceCategoryGroup(location.getCity());
-//							}
-//						}
-//					});
-//				}
-//	        	
-//	        });
-	        
 	        rootView.findViewById(R.id.switch_adress_btn).setOnClickListener(this);
 	        rootView.findViewById(R.id.map_btn).setOnClickListener(this);
 	        
 			categoryMenuLayout = (CategoryMenuLayout)rootView.findViewById(R.id.category_menu_layout);
-			String[] strArr = {"全城","距离","排序"};
+			String[] strArr = activity.getResources().getStringArray(R.array.near_nemus);
 //			menuList = CategoryMenuUtils.getTestMenuData();
 			menuList = CategoryMenuUtils.getMenuData(strArr);
 			menuBean0 = menuList.get(0);
 			menuBean1 = menuList.get(1);
 			menuBean2 = menuList.get(2);
+			
+			String[] strArr1 = activity.getResources().getStringArray(R.array.near_nemu1);
+			List<CategoryBean> list1 = menuBean1.getCategoryGroup().getCategoryListData();
+			for(int i=0;i<strArr1.length;i++){
+				CategoryBean bean = new CategoryBean();
+				bean.id = i+"";
+				bean.name = strArr1[i];
+				list1.add(bean);
+			}
+			
+			String[] strArr2 = activity.getResources().getStringArray(R.array.near_nemu2);
+			List<CategoryBean> list2 = menuBean2.getCategoryGroup().getCategoryListData();
+			for(int i=0;i<strArr2.length;i++){
+				CategoryBean bean = new CategoryBean();
+				bean.id = i+"";
+				bean.name = strArr2[i];
+				list2.add(bean);
+			}
 						
 			menuAdapter = new CategoryMenuAdapter(activity, menuList);
 			categoryMenuLayout.setAdapter(menuAdapter);
@@ -403,6 +406,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		if(isStart){
 			return;
 		}
+		DialogUtil.progressDialogShow(activity, activity.getResources().getString(R.string.is_loading));
 		isStart = true;
 		Map<String, String> params = new HashMap<String, String>(); 
 		params.put("offset", offset+"");
@@ -425,13 +429,14 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 //		scenic_id	景区id
 //		orderby	排序(1:距离最近2:人气最高3:点评最多4:人均最低5:人均最高)
 
-		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
+		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {
 				// TODO Auto-generated method stub
 				 Log.d(TAG, response); 
 				 isStart = false;
+				 DialogUtil.progressDialogDismiss();
 				 try {
 					if(!TextUtils.isEmpty(response)){
 						 JSONObject obj = new JSONObject(response);
@@ -462,6 +467,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 				// TODO Auto-generated method stub
 				Log.e(TAG, error);  
 				isStart = false;
+				DialogUtil.progressDialogDismiss();
 				handler.sendEmptyMessage(GET_DATE_FAIL);
 			}
 			
@@ -475,6 +481,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 				long arg3) {
 			Intent intent = new Intent(activity,ShopDetailsActivity.class);
+//			Intent intent = new Intent(activity,DetailWebViewActivity.class);
 			activity.startActivity(intent);
 		}
 		
@@ -488,7 +495,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		params.put("Token", Config.getUserToken(activity)+"");
 		params.put("city_id", Config.getCurrCityId(activity));
 
-		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_GETSCENIC,new ResponseHandlerInterface(){
+		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_GETSCENIC,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {

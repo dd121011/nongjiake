@@ -103,7 +103,7 @@
                         android:layout_centerInParent="true"
                         android:layout_marginLeft="@dimen/content_margin_inside"
                         android:layout_marginTop="@dimen/content_margin_outside"
-                        android:src="@drawable/face_test1"
+                        android:src="@drawable/img_default_icon"
                         app:sriv_border_color="@color/text_color0"
                         app:sriv_border_width="0dip"
                         app:sriv_left_bottom_corner_radius="48dip"
