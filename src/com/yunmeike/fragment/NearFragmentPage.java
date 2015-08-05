@@ -293,7 +293,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 		View categoryLayout = activity.getLayoutInflater().inflate(R.layout.category_window_layout, null);
 		categoryListView = (ListView) categoryLayout.findViewById(R.id.category_list);
 //		android.view.ViewGroup.LayoutParams layoutParams = categoryListView.getLayoutParams();
-//		if(categoryGroup!=null && categoryGroup.getCategoryLevelMax()>0){
+//		if(categoryGroup!=null && categoryGroup.getCategoryLevelMax()>0){；
 //			layoutParams.width = Utils.getDisplayMetrics(this)[0]/2-15;
 //		}else{
 //			layoutParams.width = LayoutParams.MATCH_PARENT;
