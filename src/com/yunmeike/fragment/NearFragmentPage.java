@@ -196,7 +196,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 			categoryMenuLayout.setOnSelectedCategoryMenuListener(new OnSelectedCategoryMenuListener() {			
 				@Override
 				public void onSelectedCategoryMenuListener(CategoryMenuBean item, int positon, View view) {
-					Toast.makeText(activity, "positon = "+positon + ", item "+item, Toast.LENGTH_SHORT).show();
+//					Toast.makeText(activity, "positon = "+positon + ", item "+item, Toast.LENGTH_SHORT).show();
 					showCategoryPop(view, item);
 				}
 			});
@@ -429,7 +429,7 @@ public class NearFragmentPage extends Fragment implements OnClickListener{
 //		scenic_id	景区id
 //		orderby	排序(1:距离最近2:人气最高3:点评最多4:人均最低5:人均最高)
 
-		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
+		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_LIST,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {

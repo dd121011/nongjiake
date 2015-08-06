@@ -355,6 +355,7 @@
             android:orientation="horizontal" >
 
             <LinearLayout
+                android:id="@+id/subscribe_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -381,6 +382,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/navigate_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -407,6 +409,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/call_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -433,6 +436,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/review_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

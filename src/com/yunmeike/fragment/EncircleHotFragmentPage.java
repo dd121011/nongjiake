@@ -105,7 +105,7 @@ public class EncircleHotFragmentPage extends Fragment {
 					// mPtrFrame.autoRefresh();
 				}
 			}, 100);
-			Toast.makeText(activity, TAG, 1000).show();
+//			Toast.makeText(activity, TAG, 1000).show();
 			startGetData();
 		}
 

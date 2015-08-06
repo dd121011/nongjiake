@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,8 +35,14 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.njk.R;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.yunmeike.BaseActivity;
+import com.yunmeike.Global;
+import com.yunmeike.bean.FamilyDetailBean;
 import com.yunmeike.bean.NearBean;
+import com.yunmeike.bean.ReviewBean;
 import com.yunmeike.fragment.ShopDetailsComboFragment;
 import com.yunmeike.fragment.ShopDetailsInfoFragment;
 import com.yunmeike.fragment.ShopDetailsRemarkFragment;
@@ -51,49 +58,107 @@ import com.yunmeike.view.ViewHolder;
 
 public class ShopDetailsActivity extends BaseActivity implements OnClickListener {
 	private final String TAG = "ShopDetailsActivity";
+	private  final static int UPATE_LAYOUT = 1;
+	
+
+	private View rootView,subscribe_btn,navigate_btn,call_btn,review_btn;
 	private ImageView topImg;
 	private RadioGroup swithRadio;
+	private CustomListView list;
+	private View shop_adress_layout;
 	
 	private Activity context;
 	private RequestQueue mQueue;
 	private FragmentManager fm;
 	private List<Fragment> fragmentlist;
 	private LinkedList<String> mListItems;
+	
+	private FamilyDetailBean detailBean;
+	private DisplayImageOptions options;	
+	
+	private Handler handler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case UPATE_LAYOUT:
+				updateUI();
+				break;
+
+			default:
+				break;
+			}
+		}
+		
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		context = this;
-		mQueue = Volley.newRequestQueue(context);  
-		View rootView = LayoutInflater.from(context).inflate(R.layout.shop_details_layout, null);
+		context = this;		
+		mQueue = Volley.newRequestQueue(context);  		
+		fm = getSupportFragmentManager(); 
+		
+		rootView = LayoutInflater.from(context).inflate(R.layout.shop_details_layout, null);
 		setContentView(rootView);
+		
+		initView();
+		initListener();
+		initData();
+	}
+
+	private void initView() {
 		Utils.showTopBtn(rootView, "店铺详情", TOP_BTN_MODE.SHOWBOTH,"","");
 		rootView.findViewById(R.id.back_btn).setOnClickListener(this);
+		swithRadio = (RadioGroup) rootView.findViewById(R.id.swith_shop_details);	
+
+		list = (CustomListView) findViewById(R.id.list_layout);
+		shop_adress_layout = findViewById(R.id.shop_adress_layout);
 		
-		fm = getSupportFragmentManager();  		
-		swithRadio = (RadioGroup) rootView.findViewById(R.id.swith_shop_details);		
+		topImg = (ImageView) findViewById(R.id.shop_top_img);
+		subscribe_btn = findViewById(R.id.subscribe_btn);
+		navigate_btn = findViewById(R.id.navigate_btn);
+		call_btn = findViewById(R.id.call_btn);
+		review_btn = findViewById(R.id.review_btn);
+	}
+	
+	private void initListener() {
 		swithRadio.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
 		swithRadio.check(R.id.radio_btn1);
+
+		shop_adress_layout.setOnClickListener(this);
 		
+		subscribe_btn.setOnClickListener(this);
+		navigate_btn.setOnClickListener(this);
+		call_btn.setOnClickListener(this);
+		review_btn.setOnClickListener(this);
+	}
+
+	private void initData() { 		
+		options = new DisplayImageOptions.Builder()
+		.showImageOnLoading(R.drawable.img_default_icon)
+		.showImageForEmptyUri(R.drawable.img_default_icon)
+		.showImageOnFail(R.drawable.img_default_icon)
+		.cacheInMemory(true)
+		.cacheOnDisk(true)
+		.considerExifParams(true)
+		.displayer(new SimpleBitmapDisplayer())
+		.build();
 		
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 		
 		int[] wh = Utils.getDisplayMetrics(context);
-		topImg = (ImageView) findViewById(R.id.shop_top_img);
 		topImg.getLayoutParams().width = wh[0];
 		topImg.getLayoutParams().height = wh[0]*4/9;
-		
-		
-		findViewById(R.id.shop_adress_layout).setOnClickListener(this);;
-		
-		CustomListView list = (CustomListView) findViewById(R.id.list_layout);
+			
 		list.setAdapter(new TextAdapter(context, textArra));
 		
 		startGetData();
 	}
-	
+
+
 	private void changeFragment(String mTag,Class mClass){  
 		Fragment mFragment = fm.findFragmentByTag(mTag);
         FragmentTransaction ft = fm.beginTransaction();  
@@ -140,6 +205,12 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		
 	}
 	
+	private void updateUI(){
+		if(detailBean!=null){
+			ImageLoader.getInstance().displayImage(Global.base_url+detailBean.getImg(), topImg, options);
+		}
+	}
+	
 	private boolean isStart = false;
 	public void startGetData(){
 		if(isStart){
@@ -151,27 +222,13 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		params.put("Token", Config.getUserToken(context)+"");
 		params.put("family_id", "222");
 		params.put("user_id", "");
-//		params.put("lng", Config.getCurLng(activity));
-//		params.put("city_id", Config.getCurrCityId(activity));
-//		params.put("scenic_id", "scenic_id");
-//		params.put("orderby", "orderby");
-//		Token	Token值
-//		offset	偏移量(0,10,20)默认0
-//		per_page	每页显示数(10)
-//		source	1web 2 android 3 ios
-//		keyword	搜索农家客关键字
-//		lat	经度
-//		lng	维度
-//		city_id	城市id
-//		scenic_id	景区id
-//		orderby	排序(1:距离最近2:人气最高3:点评最多4:人均最低5:人均最高)
 
 		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_DETAIL,new ResponseHandlerInterface(){
 
 			@Override
 			public void handlerSuccess(String response) {
 				// TODO Auto-generated method stub
-				 Log.d(TAG, response); 
+//				 Log.d(TAG, response); 
 				 isStart = false;
 				 DialogUtil.progressDialogDismiss();
 				 try {
@@ -180,8 +237,9 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 						 if(obj.has("code") && obj.getString("code").equals("0")){
 							 String jsonArray = obj.getString("data");
 							 Gson gson = new Gson();
-//							 ArrayList<NearBean> dataList = gson.fromJson(jsonArray, new TypeToken<List<NearBean>>(){}.getType());
-							
+							 detailBean = gson.fromJson(jsonArray, new TypeToken<FamilyDetailBean>(){}.getType());
+							 Log.d(TAG, detailBean+""); 
+							 handler.sendEmptyMessage(UPATE_LAYOUT);
 						 }
 					 }
 				} catch (Exception e) {
@@ -202,6 +260,173 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 
 	}
 	
+	public void familyFavDo(){
+		DialogUtil.progressDialogShow(context, context.getResources().getString(R.string.is_loading));
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("Token", Config.getUserToken(context)+"");
+		params.put("family_id", "222");
+		params.put("user_id", "");
+
+		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_FAV_DO,new ResponseHandlerInterface(){
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				 Log.d(TAG, response);
+				 DialogUtil.progressDialogDismiss();
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+//							 detailBean = gson.fromJson(jsonArray, new TypeToken<FamilyDetailBean>(){}.getType());
+//							 Log.d(TAG, detailBean+""); 
+//							 handler.sendEmptyMessage(UPATE_LAYOUT);
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);  
+				DialogUtil.progressDialogDismiss();
+			}
+			
+		},params);
+
+	}
+	
+	public void familyCancelFav(){
+		DialogUtil.progressDialogShow(context, context.getResources().getString(R.string.is_loading));
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("Token", Config.getUserToken(context)+"");
+		params.put("family_id", "222");
+		params.put("user_id", "");
+
+		RequestUtils.startStringRequest(Method.GET,mQueue, RequestCommandEnum.FAMILY_CANCEL_FAV,new ResponseHandlerInterface(){
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				 Log.d(TAG, response);
+				 DialogUtil.progressDialogDismiss();
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+//							 detailBean = gson.fromJson(jsonArray, new TypeToken<FamilyDetailBean>(){}.getType());
+//							 Log.d(TAG, detailBean+""); 
+//							 handler.sendEmptyMessage(UPATE_LAYOUT);
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);  
+				DialogUtil.progressDialogDismiss();
+			}
+			
+		},params);
+
+	}
+	
+	public void familyReviewDo(){
+		DialogUtil.progressDialogShow(context, context.getResources().getString(R.string.is_loading));
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("Token", Config.getUserToken(context)+"");
+		params.put("family_id", "222");
+		params.put("content", "点评点评");
+
+		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_REVIEW_DO,new ResponseHandlerInterface(){
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				 Log.d(TAG, response);
+				 DialogUtil.progressDialogDismiss();
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+//							 detailBean = gson.fromJson(jsonArray, new TypeToken<FamilyDetailBean>(){}.getType());
+//							 Log.d(TAG, detailBean+""); 
+//							 handler.sendEmptyMessage(UPATE_LAYOUT);
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);  
+				DialogUtil.progressDialogDismiss();
+			}
+			
+		},params);
+
+	}
+	public void familyReviewList(){
+		DialogUtil.progressDialogShow(context, context.getResources().getString(R.string.is_loading));
+		Map<String, String> params = new HashMap<String, String>(); 
+		params.put("Token", Config.getUserToken(context)+"");
+		params.put("family_id", "222");
+		params.put("user_id", "");
+
+		RequestUtils.startStringRequest(Method.POST,mQueue, RequestCommandEnum.FAMILY_REVIEW_LIST,new ResponseHandlerInterface(){
+
+			@Override
+			public void handlerSuccess(String response) {
+				// TODO Auto-generated method stub
+				 Log.d(TAG, response);
+				 DialogUtil.progressDialogDismiss();
+				 try {
+					if(!TextUtils.isEmpty(response)){
+						 JSONObject obj = new JSONObject(response);
+						 if(obj.has("code") && obj.getString("code").equals("0")){
+							 String jsonArray = obj.getString("data");
+							 Gson gson = new Gson();
+							 List<ReviewBean> reviewBeans = gson.fromJson(jsonArray, new TypeToken<List<ReviewBean>>(){}.getType());
+							 Log.d(TAG, reviewBeans+""); 
+//							 handler.sendEmptyMessage(UPATE_LAYOUT);
+						 }
+					 }
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void handlerError(String error) {
+				// TODO Auto-generated method stub
+				Log.e(TAG, error);  
+				DialogUtil.progressDialogDismiss();
+			}
+			
+		},params);
+
+	}
+	
 	String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi" };
 
 	@Override
@@ -214,6 +439,18 @@ public class ShopDetailsActivity extends BaseActivity implements OnClickListener
 		case R.id.shop_adress_layout:
 			intent = new Intent(context,ShopRouteSearchActivity.class);
 			context.startActivity(intent);
+			break;
+		case R.id.subscribe_btn:
+			familyFavDo();
+			break;
+		case R.id.navigate_btn:
+			familyCancelFav();
+			break;
+		case R.id.call_btn:
+			familyReviewDo();
+			break;
+		case R.id.review_btn:
+			familyReviewList();
 			break;
 		default:
 			break;

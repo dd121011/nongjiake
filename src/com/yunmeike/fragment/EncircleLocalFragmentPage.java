@@ -102,7 +102,7 @@ private static String TAG="EncircleLocalFragmentPage";
 					// mPtrFrame.autoRefresh();
 				}
 			}, 100);
-			Toast.makeText(activity, TAG, 1000).show();
+//			Toast.makeText(activity, TAG, 1000).show();
 			startGetData();
 		}
 

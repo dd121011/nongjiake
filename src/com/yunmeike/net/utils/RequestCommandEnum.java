@@ -12,7 +12,8 @@ public enum RequestCommandEnum {
 	FAMILY_FAV_DO("/api/family/fav_do"),
 	FAMILY_CANCEL_FAV("/api/family/cancel_fav"),
 	FAMILY_REVIEW_DO("/api/family/review_do"),
-	FAMILY_DETAIL("/api/family/detail");
+	FAMILY_DETAIL("/api/family/detail"),
+	FAMILY_REVIEW_LIST("/api/family/review_list");
 	
 
 	public String command;
